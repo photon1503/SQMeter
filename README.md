@@ -50,16 +50,6 @@ Positive value:
 * Response: z,2, 00.5C 
 
 
-#### Enabel SQM  temperature calibration 
-
-* Request: zcalex
-* Response: zxeaL 
-
-#### Disable SQM  temperature calibration   (note lower case "d")
-
-* Request:  zcaldx
-* Response: zxdaL 
-
 #### Erase EEPROM set to default value 
 
 * Request: zcalDx

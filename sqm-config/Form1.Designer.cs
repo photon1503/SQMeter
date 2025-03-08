@@ -46,13 +46,15 @@ namespace sqm_config
             label6 = new Label();
             lblMag = new Label();
             groupBox2 = new GroupBox();
-            btnReadConfig = new Button();
-            lblSQMOffset = new Label();
             label7 = new Label();
+            label5 = new Label();
+            txtSQMcal = new TextBox();
+            btnSQMCal = new Button();
+            btnReadConfig = new Button();
             txtLog = new TextBox();
             button2 = new Button();
-            btnSQMCal = new Button();
-            txtSQMcal = new TextBox();
+            chkRefresh = new CheckBox();
+            btnReset = new Button();
             Version.SuspendLayout();
             groupBox1.SuspendLayout();
             groupBox2.SuspendLayout();
@@ -206,11 +208,12 @@ namespace sqm_config
             // 
             // groupBox2
             // 
+            groupBox2.Controls.Add(btnReset);
+            groupBox2.Controls.Add(label7);
+            groupBox2.Controls.Add(label5);
             groupBox2.Controls.Add(txtSQMcal);
             groupBox2.Controls.Add(btnSQMCal);
             groupBox2.Controls.Add(btnReadConfig);
-            groupBox2.Controls.Add(lblSQMOffset);
-            groupBox2.Controls.Add(label7);
             groupBox2.Location = new Point(326, 189);
             groupBox2.Name = "groupBox2";
             groupBox2.Size = new Size(200, 133);
@@ -218,33 +221,51 @@ namespace sqm_config
             groupBox2.TabStop = false;
             groupBox2.Text = "Config";
             // 
+            // label7
+            // 
+            label7.AutoSize = true;
+            label7.Font = new Font("Segoe UI", 7F);
+            label7.Location = new Point(13, 87);
+            label7.Name = "label7";
+            label7.Size = new Size(175, 12);
+            label7.TabIndex = 7;
+            label7.Text = "Valid calibration values are -25.0 to 25.0";
+            // 
+            // label5
+            // 
+            label5.AutoSize = true;
+            label5.Location = new Point(13, 64);
+            label5.Name = "label5";
+            label5.Size = new Size(68, 15);
+            label5.TabIndex = 6;
+            label5.Text = "SQM Offset";
+            // 
+            // txtSQMcal
+            // 
+            txtSQMcal.Location = new Point(87, 61);
+            txtSQMcal.Name = "txtSQMcal";
+            txtSQMcal.Size = new Size(69, 23);
+            txtSQMcal.TabIndex = 5;
+            // 
+            // btnSQMCal
+            // 
+            btnSQMCal.Location = new Point(87, 24);
+            btnSQMCal.Name = "btnSQMCal";
+            btnSQMCal.Size = new Size(75, 23);
+            btnSQMCal.TabIndex = 4;
+            btnSQMCal.Text = "Write";
+            btnSQMCal.UseVisualStyleBackColor = true;
+            btnSQMCal.Click += btnSQMCal_Click;
+            // 
             // btnReadConfig
             // 
-            btnReadConfig.Location = new Point(6, 104);
+            btnReadConfig.Location = new Point(6, 24);
             btnReadConfig.Name = "btnReadConfig";
             btnReadConfig.Size = new Size(75, 23);
             btnReadConfig.TabIndex = 3;
             btnReadConfig.Text = "Read";
             btnReadConfig.UseVisualStyleBackColor = true;
             btnReadConfig.Click += btnReadConfig_Click;
-            // 
-            // lblSQMOffset
-            // 
-            lblSQMOffset.AutoSize = true;
-            lblSQMOffset.Location = new Point(83, 24);
-            lblSQMOffset.Name = "lblSQMOffset";
-            lblSQMOffset.Size = new Size(12, 15);
-            lblSQMOffset.TabIndex = 2;
-            lblSQMOffset.Text = "-";
-            // 
-            // label7
-            // 
-            label7.AutoSize = true;
-            label7.Location = new Point(6, 24);
-            label7.Name = "label7";
-            label7.Size = new Size(71, 15);
-            label7.TabIndex = 1;
-            label7.Text = "SQM Offset:";
             // 
             // txtLog
             // 
@@ -266,27 +287,33 @@ namespace sqm_config
             button2.UseVisualStyleBackColor = true;
             button2.Click += button2_Click;
             // 
-            // btnSQMCal
+            // chkRefresh
             // 
-            btnSQMCal.Location = new Point(81, 53);
-            btnSQMCal.Name = "btnSQMCal";
-            btnSQMCal.Size = new Size(75, 23);
-            btnSQMCal.TabIndex = 4;
-            btnSQMCal.Text = "Write";
-            btnSQMCal.UseVisualStyleBackColor = true;
+            chkRefresh.AutoSize = true;
+            chkRefresh.Location = new Point(331, 120);
+            chkRefresh.Name = "chkRefresh";
+            chkRefresh.Size = new Size(116, 19);
+            chkRefresh.TabIndex = 8;
+            chkRefresh.Text = "Auto Refresh (5s)";
+            chkRefresh.UseVisualStyleBackColor = true;
+            chkRefresh.CheckedChanged += chkRefresh_CheckedChanged;
             // 
-            // txtSQMcal
+            // btnReset
             // 
-            txtSQMcal.Location = new Point(6, 53);
-            txtSQMcal.Name = "txtSQMcal";
-            txtSQMcal.Size = new Size(69, 23);
-            txtSQMcal.TabIndex = 5;
+            btnReset.Location = new Point(16, 108);
+            btnReset.Name = "btnReset";
+            btnReset.Size = new Size(75, 23);
+            btnReset.TabIndex = 8;
+            btnReset.Text = "Reset";
+            btnReset.UseVisualStyleBackColor = true;
+            btnReset.Click += btnReset_Click;
             // 
             // Form1
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(551, 450);
+            Controls.Add(chkRefresh);
             Controls.Add(button2);
             Controls.Add(txtLog);
             Controls.Add(groupBox2);
@@ -338,11 +365,13 @@ namespace sqm_config
         private Label lblMag;
         private GroupBox groupBox2;
         private Button btnReadConfig;
-        private Label lblSQMOffset;
-        private Label label7;
         private TextBox txtLog;
         private Button button2;
         private TextBox txtSQMcal;
         private Button btnSQMCal;
+        private Label label7;
+        private Label label5;
+        private CheckBox chkRefresh;
+        private Button btnReset;
     }
 }

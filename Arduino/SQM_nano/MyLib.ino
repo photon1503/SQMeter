@@ -27,7 +27,7 @@ void buzzer( int _long ) {
 void ReadWeather() {
 
   pres = 1000;
-  temp = 15;
+  temp = 5;
 }
 
 

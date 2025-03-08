@@ -78,7 +78,7 @@ void setup()
 
   Wire.begin();
   pinMode(ModePin, INPUT_PULLUP);
-  pinMode(BuzzerPin, OUTPUT);
+  
   Serial.begin(SERIAL_BAUD);
   Serial.setTimeout(1000);
   Serial.println("Ready");
@@ -98,7 +98,7 @@ void processCommand(const char *command)
   sprintf(counter_buffer, "%010u", counter++);
   String counter_string = String(counter_buffer);
 
-  //String response;
+  // String response;
   char response[4];
   String sqm_string;
   String temp_string;
@@ -155,20 +155,20 @@ void processCommand(const char *command)
     temp_string = _sign + temp_string;
     oled[4] = '0';
     Serial.println("g," + sqm_string + "m," + temp_string + "C,TC:" + "N," + oled + ",DC:");
-   // Serial.println(ReadEEcontras());
+    // Serial.println(ReadEEcontras());
 
     // Configuration commad
   }
-   else if (command[0] == 'z')
-   {
-     strncpy(response, command + 1, 3);
-     response[3] = '\0';
+  else if (command[0] == 'z')
+  {
+    strncpy(response, command + 1, 3);
+    response[3] = '\0';
 
-     if (strcmp(response, "cal") == 0)
-     {
-       char _x = command[4];
-       if (_x == '1')
-       { // Calibration Light offest 1
+    if (strcmp(response, "cal") == 0)
+    {
+      char _x = command[4];
+      if (_x == '1')
+      { // Calibration Light offest 1
         char responseBuffer[16];
         strncpy(responseBuffer, command + 5, sizeof(responseBuffer) - 1);
         responseBuffer[sizeof(responseBuffer) - 1] = '\0';
@@ -178,42 +178,26 @@ void processCommand(const char *command)
         Serial.print("z,1,");
         Serial.print((SqmCalOffset < 0) ? '-' : ' ');
         Serial.println(responseBuffer);
-       }
-      
+      }
 
-       // Enable temperature callibration
-       else if (_x == 'e')
-       {
-         WriteEEAutoTempCal(true);
-         Serial.println("zeaL");
-       }
 
-       // Disable temperature callibration (note lower case "d")
-       else if (_x == 'd')
-       {
-         WriteEEAutoTempCal(false);
-         //  sqm.resetTemperature();
-         Serial.println("zdaL");
-       }
 
-       // Delete calibration (note upper case "D") - set default factory value see Setup.h
-       else if (_x == 'D')
-       {
-         SqmCalOffset = SQM_CAL_OFFSET;   // set to default
-         TempCalOffset = TEMP_CAL_OFFSET; // set to default
-         WriteEETempCalOffset(TempCalOffset);
-         WriteEESqmCalOffset(SqmCalOffset);
-         WriteEEScontras(DEFALUT_CONTRAS);
-         Serial.println("zxdL");
-       }
-     }
-
-     SqmCalOffset = ReadEESqmCalOffset();   // SQM Calibration offset from EEPROM
-     TempCalOffset = ReadEETempCalOffset(); // Temperature Calibration offset from EEPROM
-   
+      // Delete calibration (note upper case "D") - set default factory value see Setup.h
+      else if (_x == 'D')
+      {
+        SqmCalOffset = SQM_CAL_OFFSET;   // set to default
+        TempCalOffset = TEMP_CAL_OFFSET; // set to default
+        WriteEETempCalOffset(TempCalOffset);
+        WriteEESqmCalOffset(SqmCalOffset);
+        WriteEEScontras(DEFALUT_CONTRAS);
+        Serial.println("zxdL");
+      }
     }
-  }
 
+    SqmCalOffset = ReadEESqmCalOffset();   // SQM Calibration offset from EEPROM
+   
+  }
+}
 
 const byte BUFFER_SIZE = 32;
 char inputBuffer[BUFFER_SIZE];

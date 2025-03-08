@@ -1,4 +1,5 @@
 using System;
+using System.Globalization;
 using System.IO.Ports;
 using System.Text;
 
@@ -90,13 +91,67 @@ namespace sqm_config
             if (response.StartsWith("g,"))
             {
                 string[] split = response.Split(',');
-                lblSQMOffset.Text = split[1];
+
+                //remove trailing m from split[1]
+                split[1] = split[1].Substring(0, split[1].Length - 1);
+
+                txtSQMcal.Text = split[1];
             }
         }
 
         private async void button2_Click(object sender, EventArgs e)
         {
             await RefreshAsync();
+        }
+
+        private async void btnSQMCal_Click(object sender, EventArgs e)
+        {
+            if (!double.TryParse(txtSQMcal.Text, NumberStyles.Float, CultureInfo.InvariantCulture, out double calValue))
+            {
+                MessageBox.Show("Invalid calibration value");
+                return;
+            }
+
+            if (calValue < -25 || calValue > 25)
+            {
+                MessageBox.Show("Calibration value must be between -25 and 25");
+                return;
+            }
+
+            // Format the command string based on the value of calValue
+            string command = calValue < 0
+                ? $"zcal1{calValue.ToString("0.00", CultureInfo.InvariantCulture)}x"
+                : $"zcal1{calValue.ToString("00.00", CultureInfo.InvariantCulture)}x";
+            txtLog.AppendText($"Sending: {command}\r\n");
+            string response = await _sqmSerial.SendCommandAsync(command);
+        }
+
+        private void chkRefresh_CheckedChanged(object sender, EventArgs e)
+        {
+            if (chkRefresh.Checked)
+            {
+                timer = new System.Windows.Forms.Timer();
+                timer.Interval = 5000;
+                timer.Tick += async (s, e) => await RefreshAsync();
+                timer.Start();
+            }
+            else
+            {
+                timer.Stop();
+                timer.Dispose();
+            }
+        }
+
+        private async void btnReset_Click(object sender, EventArgs e)
+        {
+            //warning message
+            DialogResult dialogResult = MessageBox.Show("Are you sure you want to reset the SQM calibration values to factory defaults?", "Reset SQM", MessageBoxButtons.YesNo);
+
+            if (dialogResult == DialogResult.Yes)
+            {
+                txtLog.AppendText($"Sending: zcalDx\r\n");
+                string response = await _sqmSerial.SendCommandAsync("zcalDx");
+            }
         }
     }
 }

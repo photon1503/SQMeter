@@ -43,9 +43,12 @@ namespace sqm_config
             label2 = new Label();
             label1 = new Label();
             groupBox1 = new GroupBox();
+            lblAdvanced = new Label();
+            lblAdvancedLabel = new Label();
             label6 = new Label();
             lblMag = new Label();
             groupBox2 = new GroupBox();
+            btnReset = new Button();
             label7 = new Label();
             label5 = new Label();
             txtSQMcal = new TextBox();
@@ -54,7 +57,7 @@ namespace sqm_config
             txtLog = new TextBox();
             button2 = new Button();
             chkRefresh = new CheckBox();
-            btnReset = new Button();
+            button3 = new Button();
             Version.SuspendLayout();
             groupBox1.SuspendLayout();
             groupBox2.SuspendLayout();
@@ -63,7 +66,7 @@ namespace sqm_config
             // cmbCOMports
             // 
             cmbCOMports.FormattingEnabled = true;
-            cmbCOMports.Location = new Point(97, 29);
+            cmbCOMports.Location = new Point(63, 13);
             cmbCOMports.Name = "cmbCOMports";
             cmbCOMports.Size = new Size(121, 23);
             cmbCOMports.TabIndex = 0;
@@ -71,7 +74,7 @@ namespace sqm_config
             // lblPort
             // 
             lblPort.AutoSize = true;
-            lblPort.Location = new Point(29, 33);
+            lblPort.Location = new Point(28, 16);
             lblPort.Name = "lblPort";
             lblPort.Size = new Size(29, 15);
             lblPort.TabIndex = 1;
@@ -79,7 +82,7 @@ namespace sqm_config
             // 
             // button1
             // 
-            button1.Location = new Point(245, 28);
+            button1.Location = new Point(190, 12);
             button1.Name = "button1";
             button1.Size = new Size(75, 23);
             button1.TabIndex = 2;
@@ -97,9 +100,9 @@ namespace sqm_config
             Version.Controls.Add(label3);
             Version.Controls.Add(label2);
             Version.Controls.Add(label1);
-            Version.Location = new Point(29, 189);
+            Version.Location = new Point(29, 283);
             Version.Name = "Version";
-            Version.Size = new Size(291, 133);
+            Version.Size = new Size(236, 115);
             Version.TabIndex = 3;
             Version.TabStop = false;
             Version.Text = "Version";
@@ -178,19 +181,39 @@ namespace sqm_config
             // 
             // groupBox1
             // 
+            groupBox1.Controls.Add(lblAdvanced);
+            groupBox1.Controls.Add(lblAdvancedLabel);
             groupBox1.Controls.Add(label6);
             groupBox1.Controls.Add(lblMag);
-            groupBox1.Location = new Point(35, 83);
+            groupBox1.Location = new Point(29, 77);
             groupBox1.Name = "groupBox1";
-            groupBox1.Size = new Size(285, 100);
+            groupBox1.Size = new Size(493, 200);
             groupBox1.TabIndex = 4;
             groupBox1.TabStop = false;
             groupBox1.Text = "Measurement";
             // 
+            // lblAdvanced
+            // 
+            lblAdvanced.AutoSize = true;
+            lblAdvanced.Location = new Point(412, 59);
+            lblAdvanced.Name = "lblAdvanced";
+            lblAdvanced.Size = new Size(12, 15);
+            lblAdvanced.TabIndex = 3;
+            lblAdvanced.Text = "-";
+            // 
+            // lblAdvancedLabel
+            // 
+            lblAdvancedLabel.AutoSize = true;
+            lblAdvancedLabel.Location = new Point(329, 59);
+            lblAdvancedLabel.Name = "lblAdvancedLabel";
+            lblAdvancedLabel.Size = new Size(66, 120);
+            lblAdvancedLabel.TabIndex = 2;
+            lblAdvancedLabel.Text = "Luminosity\r\nIR\r\nAdj.IR\r\nVisible\r\nAdj.Vis.\r\nFull\r\nGain\r\nLux";
+            // 
             // label6
             // 
             label6.AutoSize = true;
-            label6.Location = new Point(201, 49);
+            label6.Location = new Point(8, 84);
             label6.Name = "label6";
             label6.Size = new Size(78, 15);
             label6.TabIndex = 1;
@@ -214,18 +237,28 @@ namespace sqm_config
             groupBox2.Controls.Add(txtSQMcal);
             groupBox2.Controls.Add(btnSQMCal);
             groupBox2.Controls.Add(btnReadConfig);
-            groupBox2.Location = new Point(326, 189);
+            groupBox2.Location = new Point(271, 283);
             groupBox2.Name = "groupBox2";
-            groupBox2.Size = new Size(200, 133);
+            groupBox2.Size = new Size(251, 115);
             groupBox2.TabIndex = 5;
             groupBox2.TabStop = false;
             groupBox2.Text = "Config";
+            // 
+            // btnReset
+            // 
+            btnReset.Location = new Point(166, 82);
+            btnReset.Name = "btnReset";
+            btnReset.Size = new Size(75, 23);
+            btnReset.TabIndex = 8;
+            btnReset.Text = "Reset";
+            btnReset.UseVisualStyleBackColor = true;
+            btnReset.Click += btnReset_Click;
             // 
             // label7
             // 
             label7.AutoSize = true;
             label7.Font = new Font("Segoe UI", 7F);
-            label7.Location = new Point(13, 87);
+            label7.Location = new Point(13, 57);
             label7.Name = "label7";
             label7.Size = new Size(175, 12);
             label7.TabIndex = 7;
@@ -234,7 +267,7 @@ namespace sqm_config
             // label5
             // 
             label5.AutoSize = true;
-            label5.Location = new Point(13, 64);
+            label5.Location = new Point(13, 34);
             label5.Name = "label5";
             label5.Size = new Size(68, 15);
             label5.TabIndex = 6;
@@ -242,14 +275,14 @@ namespace sqm_config
             // 
             // txtSQMcal
             // 
-            txtSQMcal.Location = new Point(87, 61);
+            txtSQMcal.Location = new Point(87, 31);
             txtSQMcal.Name = "txtSQMcal";
             txtSQMcal.Size = new Size(69, 23);
             txtSQMcal.TabIndex = 5;
             // 
             // btnSQMCal
             // 
-            btnSQMCal.Location = new Point(87, 24);
+            btnSQMCal.Location = new Point(87, 82);
             btnSQMCal.Name = "btnSQMCal";
             btnSQMCal.Size = new Size(75, 23);
             btnSQMCal.TabIndex = 4;
@@ -259,7 +292,7 @@ namespace sqm_config
             // 
             // btnReadConfig
             // 
-            btnReadConfig.Location = new Point(6, 24);
+            btnReadConfig.Location = new Point(6, 82);
             btnReadConfig.Name = "btnReadConfig";
             btnReadConfig.Size = new Size(75, 23);
             btnReadConfig.TabIndex = 3;
@@ -270,7 +303,7 @@ namespace sqm_config
             // txtLog
             // 
             txtLog.Enabled = false;
-            txtLog.Location = new Point(33, 340);
+            txtLog.Location = new Point(29, 404);
             txtLog.Multiline = true;
             txtLog.Name = "txtLog";
             txtLog.ScrollBars = ScrollBars.Vertical;
@@ -279,7 +312,7 @@ namespace sqm_config
             // 
             // button2
             // 
-            button2.Location = new Point(328, 92);
+            button2.Location = new Point(28, 48);
             button2.Name = "button2";
             button2.Size = new Size(75, 23);
             button2.TabIndex = 7;
@@ -290,7 +323,7 @@ namespace sqm_config
             // chkRefresh
             // 
             chkRefresh.AutoSize = true;
-            chkRefresh.Location = new Point(331, 120);
+            chkRefresh.Location = new Point(109, 51);
             chkRefresh.Name = "chkRefresh";
             chkRefresh.Size = new Size(116, 19);
             chkRefresh.TabIndex = 8;
@@ -298,21 +331,22 @@ namespace sqm_config
             chkRefresh.UseVisualStyleBackColor = true;
             chkRefresh.CheckedChanged += chkRefresh_CheckedChanged;
             // 
-            // btnReset
+            // button3
             // 
-            btnReset.Location = new Point(16, 108);
-            btnReset.Name = "btnReset";
-            btnReset.Size = new Size(75, 23);
-            btnReset.TabIndex = 8;
-            btnReset.Text = "Reset";
-            btnReset.UseVisualStyleBackColor = true;
-            btnReset.Click += btnReset_Click;
+            button3.Location = new Point(358, 51);
+            button3.Name = "button3";
+            button3.Size = new Size(164, 23);
+            button3.TabIndex = 9;
+            button3.Text = "SQM-LU Protocol Test";
+            button3.UseVisualStyleBackColor = true;
+            button3.Click += button3_Click;
             // 
             // Form1
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(551, 450);
+            ClientSize = new Size(551, 514);
+            Controls.Add(button3);
             Controls.Add(chkRefresh);
             Controls.Add(button2);
             Controls.Add(txtLog);
@@ -323,7 +357,7 @@ namespace sqm_config
             Controls.Add(lblPort);
             Controls.Add(cmbCOMports);
             Name = "Form1";
-            Text = "Form1";
+            Text = "SQMeter";
             Load += Form1_Load;
             Version.ResumeLayout(false);
             Version.PerformLayout();
@@ -373,5 +407,8 @@ namespace sqm_config
         private Label label5;
         private CheckBox chkRefresh;
         private Button btnReset;
+        private Label lblAdvancedLabel;
+        private Label lblAdvanced;
+        private Button button3;
     }
 }

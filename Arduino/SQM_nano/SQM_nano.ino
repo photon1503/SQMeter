@@ -56,6 +56,8 @@ uint32_t luminosity;
 uint16_t ir, full, visible;
 double adjustedVisible, adjustedIR;
 double mag;
+float lux;
+float ulux;
 
 float SqmCalOffset = SQM_CAL_OFFSET;   // SQM Calibration offset from EEPROM
 float TempCalOffset = TEMP_CAL_OFFSET; // Temperature Calibration offset from EEPROM
@@ -80,7 +82,7 @@ void setup()
   pinMode(ModePin, INPUT_PULLUP);
   
   Serial.begin(SERIAL_BAUD);
-  Serial.setTimeout(1000);
+ // Serial.setTimeout(5000);
   Serial.println("Ready");
 
   tsl.begin();
@@ -155,9 +157,42 @@ void processCommand(const char *command)
     temp_string = _sign + temp_string;
     oled[4] = '0';
     Serial.println("g," + sqm_string + "m," + temp_string + "C,TC:" + "N," + oled + ",DC:");
-    // Serial.println(ReadEEcontras());
 
-    // Configuration commad
+   
+  }
+  // advanced response
+
+  else if (command[0] == 'a') {
+    mySQM();
+    Serial.print("a,");
+    Serial.print(luminosity);
+    Serial.print(",");
+    Serial.print(ir);
+    Serial.print(",");
+    Serial.print(adjustedIR);
+    Serial.print(",");
+    Serial.print(visible);
+    Serial.print(",");
+    Serial.print(adjustedVisible);
+    Serial.print(",");
+    Serial.print(full);
+    
+    Serial.print(",");
+    Serial.print(gainscale);
+    Serial.print(",");
+    char luxBuffer[16];
+    dtostrf(lux, 10, 6, luxBuffer); // 7 is the minimum width, 3 is the number of decimal places
+
+
+    Serial.print(luxBuffer);
+    Serial.print(",");
+    char magBuffer[10];
+    dtostrf(mag, 7, 3, magBuffer); // 7 is the minimum width, 3 is the number of decimal places
+
+    Serial.println(magBuffer);
+
+
+ 
   }
   else if (command[0] == 'z')
   {
@@ -199,7 +234,7 @@ void processCommand(const char *command)
   }
 }
 
-const byte BUFFER_SIZE = 32;
+const byte BUFFER_SIZE = 64;
 char inputBuffer[BUFFER_SIZE];
 byte index = 0;
 
@@ -224,5 +259,10 @@ void loop()
     {
       inputBuffer[index++] = received;
     }
+    else
+        {
+            // Buffer overflow, reset index
+            index = 0;
+        }
   }
 } // end of loop

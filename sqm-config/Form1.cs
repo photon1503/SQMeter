@@ -52,6 +52,30 @@ namespace sqm_config
             }
         }
 
+        private async Task RefreshSQMLUAsync()
+        {
+            if (pauseReading)
+            {
+                return;
+            }
+            /*
+             * #### Read data
+            * Request: rx
+            * Response: r, 10.28m,0000000000Hz,0000000002c,000005.000s, 026.2C
+            * */
+            string response = await _sqmSerial.SendCommandAsync("rx");
+            // response
+            // r, 10.28m,0000000000Hz,0000000002c,000005.000s, 026.2C
+            if (response.StartsWith("r,"))
+            {
+                string[] split = response.Split(',');
+
+                //remove trailing m from split[1]
+                split[1] = split[1].Substring(0, split[1].Length - 1);
+                lblMag.Text = split[1];
+            }
+        }
+
         private async Task RefreshAsync()
         {
             if (pauseReading)
@@ -64,12 +88,31 @@ namespace sqm_config
             * Response: r, 10.28m,0000000000Hz,0000000002c,000005.000s, 026.2C
             * */
 
-            string response = await _sqmSerial.SendCommandAsync("rx");
+            string response = await _sqmSerial.SendCommandAsync("ax");
 
-            if (response.StartsWith("r,"))
+            // response
+            // a,262149,4,0.00,1,0.00,5,9876.00,21.57
+            // luminosity, ir, adjustedIR,visible,adjustedVisible,full,gainscale,mag
+            if (response.StartsWith("a,"))
             {
                 string[] split = response.Split(',');
-                lblMag.Text = split[1];
+                lblAdvanced.Text = split[1];
+                lblAdvanced.Text += Environment.NewLine;
+                lblAdvanced.Text += split[2];
+                lblAdvanced.Text += Environment.NewLine;
+                lblAdvanced.Text += split[3];
+                lblAdvanced.Text += Environment.NewLine;
+                lblAdvanced.Text += split[4];
+                lblAdvanced.Text += Environment.NewLine;
+                lblAdvanced.Text += split[5];
+                lblAdvanced.Text += Environment.NewLine;
+                lblAdvanced.Text += split[6];
+                lblAdvanced.Text += Environment.NewLine;
+                lblAdvanced.Text += split[7].TrimStart();
+                lblAdvanced.Text += Environment.NewLine;
+
+                lblAdvanced.Text += split[8].TrimStart();
+                lblMag.Text = split[9];
             }
         }
 
@@ -152,6 +195,11 @@ namespace sqm_config
                 txtLog.AppendText($"Sending: zcalDx\r\n");
                 string response = await _sqmSerial.SendCommandAsync("zcalDx");
             }
+        }
+
+        private void button3_Click(object sender, EventArgs e)
+        {
+            RefreshSQMLUAsync();
         }
     }
 }

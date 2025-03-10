@@ -39,7 +39,9 @@ ttps://easyeda.com/hujer.roman/sqm-hr
 #include <EEPROM.h>
 
 #include <Adafruit_Sensor.h>
-#include <Adafruit_TSL2591.h>
+// #include <Adafruit_TSL2591.h>
+#include "SQM_TSL2591.h"
+#include <Adafruit_BME280.h>
 
 #include <math.h>
 
@@ -50,7 +52,8 @@ ttps://easyeda.com/hujer.roman/sqm-hr
 
 #define MAX_BUFFER_SIZE 64
 
-Adafruit_TSL2591 tsl = Adafruit_TSL2591(2591);
+// Adafruit_TSL2591 tsl = Adafruit_TSL2591(2591);
+SQM_TSL2591 sqm = SQM_TSL2591(2591);
 double gainscale = MAXSCALE;
 uint32_t luminosity;
 uint16_t ir, full, visible;
@@ -80,14 +83,31 @@ void setup()
 
   Wire.begin();
   pinMode(ModePin, INPUT_PULLUP);
-  
+
   Serial.begin(SERIAL_BAUD);
- // Serial.setTimeout(5000);
+  // Serial.setTimeout(5000);
   Serial.println("Ready");
 
-  tsl.begin();
-  tsl.setGain(TSL2591_GAIN_MAX);
-  tsl.setTiming(TSL2591_INTEGRATIONTIME_600MS);
+  setup_temperature();
+
+  void readSQM(void);
+  if (sqm.begin())
+  {
+    sqm.verbose = false;
+    sqm.config.gain = TSL2591_GAIN_MAX;
+    sqm.config.time = TSL2591_INTEGRATIONTIME_600MS;
+    sqm.configSensor();
+  }
+  else
+  {
+    InitError = true;
+    Serial.println("TSL2591 not found");
+  }
+
+  SqmCalOffset = ReadEESqmCalOffset();     // SQM Calibration offset from EEPROM
+  TempCalOffset = ReadEETempCalOffset();   // Temperature Calibration offset from EEPROM
+
+  sqm.setCalibrationOffset(SqmCalOffset);  // call offset
 
 } // end of Setup
 
@@ -117,15 +137,21 @@ void processCommand(const char *command)
   }
   else if (strcmp(command, "r") == 0)
   {
-    mySQM();
-    sqm_string = String((mag < 0) ? -mag : mag, 2);
+    ReadWeather();
+    if (ReadEEAutoTempCal())
+      sqm.setTemperature(temp); // temp call
+    // mySQM();
+    sqm.takeReading();
+
+    sqm_string = String((sqm.mpsas < 0) ? -sqm.mpsas : sqm.mpsas, 2);
     while (sqm_string.length() < 5)
     {
       sqm_string = '0' + sqm_string;
     }
-    _sign = (mag < 0) ? '-' : ' ';
+    _sign = (sqm.mpsas < 0) ? '-' : ' ';
     sqm_string = _sign + sqm_string;
 
+    temp = get_temperature();
     temp_string = String((temp < 0) ? -temp : temp, 1);
     while (temp_string.length() < 5)
     {
@@ -157,42 +183,48 @@ void processCommand(const char *command)
     temp_string = _sign + temp_string;
     oled[4] = '0';
     Serial.println("g," + sqm_string + "m," + temp_string + "C,TC:" + "N," + oled + ",DC:");
-
-   
   }
   // advanced response
 
-  else if (command[0] == 'a') {
-    mySQM();
+  else if (command[0] == 'a')
+  {
+    ReadWeather();
+    if (ReadEEAutoTempCal())
+      sqm.setTemperature(temp); // temp call
+    sqm.config.gain = TSL2591_GAIN_MAX;
+    sqm.config.time = TSL2591_INTEGRATIONTIME_600MS;
+    sqm.takeReading();
+
     Serial.print("a,");
-    Serial.print(luminosity);
-    Serial.print(",");
-    Serial.print(ir);
-    Serial.print(",");
-    Serial.print(adjustedIR);
-    Serial.print(",");
-    Serial.print(visible);
-    Serial.print(",");
+    //Serial.print(luminosity);
+    Serial.print(",full:");
+    Serial.print(sqm.full);
+    Serial.print(",ir:");
+    Serial.print(sqm.ir);
+    Serial.print(",vis:");
+    Serial.print(sqm.vis);
+    Serial.print(",adjvis:");
     Serial.print(adjustedVisible);
     Serial.print(",");
-    Serial.print(full);
-    
-    Serial.print(",");
-    Serial.print(gainscale);
-    Serial.print(",");
+    Serial.print(sqm.mpsas);
+    Serial.print(",dmpsas:");
+    Serial.print(sqm.dmpsas);
+    Serial.print(",integration:");
+    Serial.print(sqm.integrationValue);
+    Serial.print(",gain:");
+    Serial.print(sqm.gainValue);
+    Serial.print(",niter:");
+    Serial.print(sqm.niter);
+    Serial.print(",lux:");
     char luxBuffer[16];
-    dtostrf(lux, 10, 6, luxBuffer); // 7 is the minimum width, 3 is the number of decimal places
-
+    dtostrf(sqm.lux, 10, 6, luxBuffer); // 7 is the minimum width, 3 is the number of decimal places
 
     Serial.print(luxBuffer);
-    Serial.print(",");
+    Serial.print(",mag:");
     char magBuffer[10];
     dtostrf(mag, 7, 3, magBuffer); // 7 is the minimum width, 3 is the number of decimal places
 
     Serial.println(magBuffer);
-
-
- 
   }
   else if (command[0] == 'z')
   {
@@ -215,8 +247,6 @@ void processCommand(const char *command)
         Serial.println(responseBuffer);
       }
 
-
-
       // Delete calibration (note upper case "D") - set default factory value see Setup.h
       else if (_x == 'D')
       {
@@ -229,10 +259,29 @@ void processCommand(const char *command)
       }
     }
 
-    SqmCalOffset = ReadEESqmCalOffset();   // SQM Calibration offset from EEPROM
-   
+    SqmCalOffset = ReadEESqmCalOffset(); // SQM Calibration offset from EEPROM
   }
 }
+
+/*
+BME280 sensor
+*/
+Adafruit_BME280 bme; // I2C
+
+void setup_temperature()
+{
+  bool status;
+  // default settings
+  status = bme.begin(0x76);
+
+  if (!status)
+  {
+    Serial.println("Could not find a valid BME280 sensor, check wiring!");
+    while (1)
+      ;
+  }
+}
+float get_temperature() { return bme.readTemperature(); }
 
 const byte BUFFER_SIZE = 64;
 char inputBuffer[BUFFER_SIZE];
@@ -260,9 +309,9 @@ void loop()
       inputBuffer[index++] = received;
     }
     else
-        {
-            // Buffer overflow, reset index
-            index = 0;
-        }
+    {
+      // Buffer overflow, reset index
+      index = 0;
+    }
   }
 } // end of loop

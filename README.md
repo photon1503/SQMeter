@@ -10,6 +10,7 @@ Arduino-compatible Sky Quality Meter using the TSL2591
 
 ## References
 
+https://github.com/romanhujer/SQM
 https://github.com/gshau/SQM_TSL2591/
 
 ## Links

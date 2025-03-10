@@ -61,7 +61,10 @@
 
 #include "SQM_TSL2591.h"
 
-SQM_TSL2591::SQM_TSL2591(int32_t sensorID) {
+#define MAX_ITERATIONS 32 // Define the maximum number of iterations
+
+SQM_TSL2591::SQM_TSL2591(int32_t sensorID)
+{
   _initialized = false;
   _integration = TSL2591_INTEGRATIONTIME_400MS;
   _gain = TSL2591_GAIN_LOW;
@@ -72,11 +75,13 @@ SQM_TSL2591::SQM_TSL2591(int32_t sensorID) {
   // yet
 }
 
-boolean SQM_TSL2591::begin(void) {
+boolean SQM_TSL2591::begin(void)
+{
   Wire.begin();
 
   uint8_t id = read8(0x12);
-  if (id != 0x50) {
+  if (id != 0x50)
+  {
     return false;
   }
 
@@ -95,9 +100,12 @@ boolean SQM_TSL2591::begin(void) {
   return _initialized;
 }
 
-void SQM_TSL2591::enable(void) {
-  if (!_initialized) {
-    if (!begin()) {
+void SQM_TSL2591::enable(void)
+{
+  if (!_initialized)
+  {
+    if (!begin())
+    {
       return;
     }
   }
@@ -107,9 +115,12 @@ void SQM_TSL2591::enable(void) {
          TSL2591_ENABLE_POWERON | TSL2591_ENABLE_AEN | TSL2591_ENABLE_AIEN);
 }
 
-void SQM_TSL2591::disable(void) {
-  if (!_initialized) {
-    if (!begin()) {
+void SQM_TSL2591::disable(void)
+{
+  if (!_initialized)
+  {
+    if (!begin())
+    {
       return;
     }
   }
@@ -119,22 +130,28 @@ void SQM_TSL2591::disable(void) {
          TSL2591_ENABLE_POWEROFF);
 }
 
-void SQM_TSL2591::setTemperatureCalibration (const temperatureCalibration &calibrationData) {
+void SQM_TSL2591::setTemperatureCalibration(const temperatureCalibration &calibrationData)
+{
   _temperatureCalibration = calibrationData;
 }
 
-void SQM_TSL2591::setTemperature (float temperature) {
-    _hasTemperature = true;
-    _temperature = temperature;
+void SQM_TSL2591::setTemperature(float temperature)
+{
+  _hasTemperature = true;
+  _temperature = temperature;
 }
 
-void SQM_TSL2591::resetTemperature () {
-    _hasTemperature = false;
+void SQM_TSL2591::resetTemperature()
+{
+  _hasTemperature = false;
 }
 
-void SQM_TSL2591::setGain(tsl2591Gain_t gain) {
-  if (!_initialized) {
-    if (!begin()) {
+void SQM_TSL2591::setGain(tsl2591Gain_t gain)
+{
+  if (!_initialized)
+  {
+    if (!begin())
+    {
       return;
     }
   }
@@ -144,7 +161,8 @@ void SQM_TSL2591::setGain(tsl2591Gain_t gain) {
   write8(TSL2591_COMMAND_BIT | TSL2591_REGISTER_CONTROL, _integration | _gain);
   disable();
 
-  switch (_gain) {
+  switch (_gain)
+  {
   case TSL2591_GAIN_LOW:
     gainValue = 1.0F;
     break;
@@ -158,22 +176,27 @@ void SQM_TSL2591::setGain(tsl2591Gain_t gain) {
     gainValue = 9876.0F;
     break;
   default:
-    if (verbose) {
+    if (verbose)
+    {
       Serial.println("Gain not found!");
     }
     break;
   }
 }
 
-void SQM_TSL2591::setCalibrationOffset(float calibrationOffset) {
+void SQM_TSL2591::setCalibrationOffset(float calibrationOffset)
+{
   _calibrationOffset = calibrationOffset;
 }
 
 tsl2591Gain_t SQM_TSL2591::getGain() { return _gain; }
 
-void SQM_TSL2591::setTiming(tsl2591IntegrationTime_t integration) {
-  if (!_initialized) {
-    if (!begin()) {
+void SQM_TSL2591::setTiming(tsl2591IntegrationTime_t integration)
+{
+  if (!_initialized)
+  {
+    if (!begin())
+    {
       return;
     }
   }
@@ -183,7 +206,8 @@ void SQM_TSL2591::setTiming(tsl2591IntegrationTime_t integration) {
   write8(TSL2591_COMMAND_BIT | TSL2591_REGISTER_CONTROL, _integration | _gain);
   disable();
 
-  switch (_integration) {
+  switch (_integration)
+  {
   case TSL2591_INTEGRATIONTIME_100MS:
     integrationValue = 100.F;
     break;
@@ -204,7 +228,8 @@ void SQM_TSL2591::setTiming(tsl2591IntegrationTime_t integration) {
     break;
   default: // 100ms
     integrationValue = 999.F;
-    if (verbose) {
+    if (verbose)
+    {
       Serial.println("Integration not found!");
       Serial.println(_integration);
     }
@@ -214,12 +239,14 @@ void SQM_TSL2591::setTiming(tsl2591IntegrationTime_t integration) {
 
 tsl2591IntegrationTime_t SQM_TSL2591::getTiming() { return _integration; }
 
-void SQM_TSL2591::configSensor() {
+void SQM_TSL2591::configSensor()
+{
   setGain(config.gain);
   setTiming(config.time);
 }
 
-void SQM_TSL2591::showConfig() {
+void SQM_TSL2591::showConfig()
+{
   Serial.print("Integration: ");
   Serial.print(integrationValue);
   Serial.println(" ms");
@@ -228,9 +255,12 @@ void SQM_TSL2591::showConfig() {
   Serial.println("x");
 }
 
-uint32_t SQM_TSL2591::getFullLuminosity(void) {
-  if (!_initialized) {
-    if (!begin()) {
+uint32_t SQM_TSL2591::getFullLuminosity(void)
+{
+  if (!_initialized)
+  {
+    if (!begin())
+    {
       return 0;
     }
   }
@@ -239,7 +269,8 @@ uint32_t SQM_TSL2591::getFullLuminosity(void) {
   enable();
 
   // Wait x ms for ADC to complete
-  for (uint8_t d = 0; d <= _integration; d++) {
+  for (uint8_t d = 0; d <= _integration; d++)
+  {
     delay(120);
   }
 
@@ -253,33 +284,47 @@ uint32_t SQM_TSL2591::getFullLuminosity(void) {
   return x;
 }
 
-void SQM_TSL2591::bumpGain(int bumpDirection) {
-  switch (config.gain) {
+void SQM_TSL2591::bumpGain(int bumpDirection)
+{
+  switch (config.gain)
+  {
   case TSL2591_GAIN_LOW:
-    if (bumpDirection > 0) {
+    if (bumpDirection > 0)
+    {
       config.gain = TSL2591_GAIN_MED;
-    } else {
+    }
+    else
+    {
       config.gain = TSL2591_GAIN_LOW;
     }
     break;
   case TSL2591_GAIN_MED:
-    if (bumpDirection > 0) {
+    if (bumpDirection > 0)
+    {
       config.gain = TSL2591_GAIN_HIGH;
-    } else {
+    }
+    else
+    {
       config.gain = TSL2591_GAIN_LOW;
     }
     break;
   case TSL2591_GAIN_HIGH:
-    if (bumpDirection > 0) {
+    if (bumpDirection > 0)
+    {
       config.gain = TSL2591_GAIN_MAX;
-    } else {
+    }
+    else
+    {
       config.gain = TSL2591_GAIN_MED;
     }
     break;
   case TSL2591_GAIN_MAX:
-    if (bumpDirection > 0) {
+    if (bumpDirection > 0)
+    {
       config.gain = TSL2591_GAIN_MAX;
-    } else {
+    }
+    else
+    {
       config.gain = TSL2591_GAIN_HIGH;
     }
     break;
@@ -289,26 +334,37 @@ void SQM_TSL2591::bumpGain(int bumpDirection) {
   setGain(config.gain);
 }
 
-void SQM_TSL2591::bumpTime(int bumpDirection) {
-  switch (config.time) {
+void SQM_TSL2591::bumpTime(int bumpDirection)
+{
+  switch (config.time)
+  {
   case TSL2591_INTEGRATIONTIME_200MS:
-    if (bumpDirection > 0) {
+    if (bumpDirection > 0)
+    {
       config.time = TSL2591_INTEGRATIONTIME_400MS;
-    } else {
+    }
+    else
+    {
       config.time = TSL2591_INTEGRATIONTIME_200MS;
     }
     break;
   case TSL2591_INTEGRATIONTIME_400MS:
-    if (bumpDirection > 0) {
+    if (bumpDirection > 0)
+    {
       config.time = TSL2591_INTEGRATIONTIME_600MS;
-    } else {
+    }
+    else
+    {
       config.time = TSL2591_INTEGRATIONTIME_200MS;
     }
     break;
   case TSL2591_INTEGRATIONTIME_600MS:
-    if (bumpDirection > 0) {
+    if (bumpDirection > 0)
+    {
       config.time = TSL2591_INTEGRATIONTIME_600MS;
-    } else {
+    }
+    else
+    {
       config.time = TSL2591_INTEGRATIONTIME_400MS;
     }
     break;
@@ -318,142 +374,137 @@ void SQM_TSL2591::bumpTime(int bumpDirection) {
   setTiming(config.time);
 }
 
-void SQM_TSL2591::calibrateReadingsForTemperature(uint16_t &ir, uint16_t &full) {
-  if (_hasTemperature) {
-    if (verbose) {
-        Serial.print("Values before temperature calibration: ir=");
-        Serial.print(ir);
-        Serial.print(", full=");
-        Serial.println(full);
+void SQM_TSL2591::calibrateReadingsForTemperature(uint16_t &ir, uint16_t &full)
+{
+  if (_hasTemperature)
+  {
+    if (verbose)
+    {
+      Serial.print("Values before temperature calibration: ir=");
+      Serial.print(ir);
+      Serial.print(", full=");
+      Serial.println(full);
     }
     float irCalibrationFactor = _temperature * _temperatureCalibration.irSlope + _temperatureCalibration.irIntercept;
     float fullCalibrationFactor = _temperature * _temperatureCalibration.fullLuminositySlope + _temperatureCalibration.fullLuminosityIntercept;
-    ir   = static_cast<uint16_t>(static_cast<float>(ir) * irCalibrationFactor);
+    ir = static_cast<uint16_t>(static_cast<float>(ir) * irCalibrationFactor);
     full = static_cast<uint16_t>(static_cast<float>(full) * fullCalibrationFactor);
-    if (verbose) {
-        Serial.print("Values after temperature calibration: ir=");
-        Serial.print(ir);
-        Serial.print(", full=");
-        Serial.println(full);
+    if (verbose)
+    {
+      Serial.print("Values after temperature calibration: ir=");
+      Serial.print(ir);
+      Serial.print(", full=");
+      Serial.println(full);
     }
-
   }
 }
 
-void SQM_TSL2591::takeReading(void) {
+void SQM_TSL2591::takeReading(void)
+{
   uint32_t lum;
-  niter = 1;
-  configSensor();
-  lum = getFullLuminosity();
-  ir = lum >> 16;
-  full = lum & 0xFFFF;
-  calibrateReadingsForTemperature(ir, full);
-  vis = full - ir;
+  niter = 0; // Initialize the iteration counter
 
-
-  
-  if ((float)full < (float)ir) {
-    if (verbose) {
-      Serial.println("Odd, full less than ir!  Rechecking...");
-    }
-    takeReading();
-  }
-  // When intensity is faint at current gain setting
-  if ((float)vis < 128.) {
-    if (_gain == TSL2591_GAIN_MAX) {
-      if (_integration != TSL2591_INTEGRATIONTIME_600MS) {
-        if (verbose) {
-          Serial.println("Bumping integration up");
-        }
-        bumpTime(1);
-        if (verbose)
-          showConfig();
+    while (niter < MAX_ITERATIONS) {
+        niter++;
         configSensor();
         lum = getFullLuminosity();
-        delay(50);
-        takeReading();
-      } else {
-        uint32_t fullCumulative;
-        uint16_t visCumulative, irCumulative;
+        ir = lum >> 16;
+        full = lum & 0xFFFF;
+        calibrateReadingsForTemperature(ir, full);
+        vis = (full > ir) ? (full - ir) : 0; // Ensure vis is non-negative
 
-        fullCumulative = full;
-        irCumulative = ir;
-        visCumulative = vis;
-        // Do iterative sampling to gain statistical certainty
-        while ((float)visCumulative < 128.) {
-          niter++;
-          delay(50);
-          lum = getFullLuminosity();
-          ir = lum >> 16;
-          full = lum & 0xFFFF;
-          calibrateReadingsForTemperature(ir, full);
-          fullCumulative += full;
-          irCumulative += ir;
-          visCumulative = fullCumulative - irCumulative;
-          if (niter > 32) {
-            break;
-          }
+        // Check for saturation and adjust gain/integration time
+        if (full == 0xFFFF || ir == 0xFFFF) {
+            if (verbose) {
+                Serial.println("Sensor saturated, adjusting settings...");
+            }
+            if (_gain != TSL2591_GAIN_LOW) {
+                bumpGain(-1); // Decrease gain
+            } else if (_integration != TSL2591_INTEGRATIONTIME_100MS) {
+                bumpTime(-1); // Decrease integration time
+            } else {
+                if (verbose) {
+                    Serial.println("Already at lowest gain and integration time.");
+                }
+                break;
+            }
+            configSensor();
+            delay(50);
+            continue; // Retry reading with new settings
         }
-        if ((float)fullCumulative > (float)irCumulative) {
-          full = fullCumulative;
-          ir = irCumulative;
-          vis = visCumulative;
-        } else {
-          if (verbose) {
-            Serial.println("Odd, full less than ir!  Rechecking...");
-          }
-          takeReading();
+
+        // When intensity is faint at current gain setting
+        if ((float)vis < 128.) {
+            if (_gain == TSL2591_GAIN_MAX) {
+                if (_integration != TSL2591_INTEGRATIONTIME_600MS) {
+                    if (verbose) {
+                        Serial.println("Bumping integration up");
+                    }
+                    bumpTime(1);
+                    if (verbose)
+                        showConfig();
+                    configSensor();
+                    delay(50);
+                    continue; // Retry reading with new settings
+                } else {
+                    uint32_t fullCumulative = full;
+                    uint16_t visCumulative = vis, irCumulative = ir;
+
+                    // Do iterative sampling to gain statistical certainty
+                    while ((float)visCumulative < 128. && niter < MAX_ITERATIONS) {
+                        niter++;
+                        delay(50);
+                        lum = getFullLuminosity();
+                        ir = lum >> 16;
+                        full = lum & 0xFFFF;
+                        calibrateReadingsForTemperature(ir, full);
+                        fullCumulative += full;
+                        irCumulative += ir;
+                        visCumulative = (fullCumulative > irCumulative) ? (fullCumulative - irCumulative) : 0;
+                    }
+                    if ((float)fullCumulative > (float)irCumulative) {
+                        full = fullCumulative;
+                        ir = irCumulative;
+                        vis = visCumulative;
+                    } else {
+                        if (verbose) {
+                            Serial.println("Odd, full less than ir!  Rechecking...");
+                        }
+                        if (niter >= MAX_ITERATIONS) {
+                            if (verbose) {
+                                Serial.println("Lens might be covered. Stopping further readings.");
+                            }
+                            break;
+                        }
+                        continue; // Retry reading
+                    }
+                }
+            } else {
+                if (verbose) {
+                    Serial.println("Bumping gain up");
+                }
+                bumpGain(1);
+                if (verbose)
+                    showConfig();
+                configSensor();
+                delay(50);
+                continue; // Retry reading with new settings
+            }
         }
-      }
-    } else {
-      if (verbose) {
-        Serial.println("Bumping gain up");
-      }
-      bumpGain(1);
-      if (verbose)
-        showConfig();
-      configSensor();
-      lum = getFullLuminosity();
-      delay(50);
-      takeReading();
+
+        // If we reach here, we have a valid reading
+        break;
     }
-  }
-  // If saturated, bump down integration or gain
-  else if (full == 0xFFFF || ir == 0xFFFF) {
-    if ((_gain == TSL2591_GAIN_MAX) &
-        (_integration != TSL2591_INTEGRATIONTIME_200MS)) {
-      if (verbose) {
-        Serial.println("Bumping integration down");
-      }
-      bumpTime(-1);
-      if (verbose)
-        showConfig();
-      configSensor();
-      lum = getFullLuminosity();
-      delay(50);
-      takeReading();
-    } else {
-      if (verbose) {
-        Serial.println("Bumping gain down");
-      }
-      bumpGain(-1);
-      if (verbose)
-        showConfig();
-      configSensor();
-      lum = getFullLuminosity();
-      delay(50);
-      takeReading();
-    }
-  }
 
   float IR = (float)ir / (gainValue * integrationValue / 200.F * niter);
   float VIS = (float)vis / (gainValue * integrationValue / 200.F * niter);
   mpsas = 12.6 - 1.086 * log(VIS) + _calibrationOffset;
   dmpsas = 1.086 / sqrt((float)vis);
-  lux = calculateLux(full, ir);
+  lux = calculateLux2(full, ir);
 }
 
-uint8_t SQM_TSL2591::read8(uint8_t reg) {
+uint8_t SQM_TSL2591::read8(uint8_t reg)
+{
   Wire.beginTransmission(TSL2591_ADDR);
   Wire.write(0x80 | 0x20 | reg); // command bit, normal mode
   Wire.endTransmission();
@@ -464,7 +515,8 @@ uint8_t SQM_TSL2591::read8(uint8_t reg) {
   return Wire.read();
 }
 
-uint16_t SQM_TSL2591::read16(uint8_t reg) {
+uint16_t SQM_TSL2591::read16(uint8_t reg)
+{
   uint16_t x;
   uint16_t t;
 
@@ -489,7 +541,8 @@ uint16_t SQM_TSL2591::read16(uint8_t reg) {
   return x;
 }
 
-void SQM_TSL2591::write8(uint8_t reg, uint8_t value) {
+void SQM_TSL2591::write8(uint8_t reg, uint8_t value)
+{
   Wire.beginTransmission(TSL2591_ADDR);
 #if ARDUINO >= 100
   Wire.write(reg);
@@ -501,6 +554,33 @@ void SQM_TSL2591::write8(uint8_t reg, uint8_t value) {
   Wire.endTransmission();
 }
 
+float SQM_TSL2591::calculateLux2(uint16_t ch0, uint16_t ch1) {
+  // Check for overflow conditions first
+  if ((ch0 == 0xFFFF) || (ch1 == 0xFFFF)) {
+      // Signal an overflow
+      return 0.0;
+  }
+
+  // Calculate the ratio of the channel values (Channel1/Channel0)
+  float ratio = (float)ch1 / (float)ch0;
+
+  // Calculate lux based on the formula provided in the datasheet
+  float lux = 0.0;
+  if (ratio <= 0.5) {
+      lux = (0.0304 * ch0) - (0.062 * ch0 * pow(ratio, 1.4));
+  } else if (ratio <= 0.61) {
+      lux = (0.0224 * ch0) - (0.031 * ch1);
+  } else if (ratio <= 0.80) {
+      lux = (0.0128 * ch0) - (0.0153 * ch1);
+  } else if (ratio <= 1.30) {
+      lux = (0.00146 * ch0) - (0.00112 * ch1);
+  } else {
+      lux = 0.0;
+  }
+
+  return lux;
+}
+
 float SQM_TSL2591::calculateLux(uint16_t ch0, uint16_t ch1) /*wbp*/
 {
   float atime, again; /*wbp*/
@@ -508,7 +588,8 @@ float SQM_TSL2591::calculateLux(uint16_t ch0, uint16_t ch1) /*wbp*/
   //  uint32_t chan0, chan1; /*wbp*/
 
   // Check for overflow conditions first
-  if ((ch0 == 0xFFFF) | (ch1 == 0xFFFF)) {
+  if ((ch0 == 0xFFFF) | (ch1 == 0xFFFF))
+  {
     // Signal an overflow
     return 0.0;
   }
@@ -516,7 +597,8 @@ float SQM_TSL2591::calculateLux(uint16_t ch0, uint16_t ch1) /*wbp*/
   // Note: This algorithm is based on preliminary coefficients
   // provided by AMS and may need to be updated in the future
 
-  switch (_integration) {
+  switch (_integration)
+  {
   case TSL2591_INTEGRATIONTIME_100MS:
     atime = 100.0F;
     break;
@@ -540,7 +622,8 @@ float SQM_TSL2591::calculateLux(uint16_t ch0, uint16_t ch1) /*wbp*/
     break;
   }
 
-  switch (_gain) {
+  switch (_gain)
+  {
   case TSL2591_GAIN_LOW:
     //      again = 1.0F;
     again = 1.03F; /*wbp*/
@@ -581,7 +664,8 @@ float SQM_TSL2591::calculateLux(uint16_t ch0, uint16_t ch1) /*wbp*/
     @brief  Gets the most recent sensor event
 */
 /**************************************************************************/
-bool SQM_TSL2591::getEvent(sensors_event_t *event) {
+bool SQM_TSL2591::getEvent(sensors_event_t *event)
+{
   uint16_t ir, full;
   uint32_t lum = getFullLuminosity();
   /* Early silicon seems to have issues when there is a sudden jump in */
@@ -609,7 +693,8 @@ bool SQM_TSL2591::getEvent(sensors_event_t *event) {
     @brief  Gets the sensor_t data
 */
 /**************************************************************************/
-void SQM_TSL2591::getSensor(sensor_t *sensor) {
+void SQM_TSL2591::getSensor(sensor_t *sensor)
+{
   /* Clear the sensor_t object */
   memset(sensor, 0, sizeof(sensor_t));
 

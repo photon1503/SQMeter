@@ -93,7 +93,7 @@ void setup()
   void readSQM(void);
   if (sqm.begin())
   {
-    sqm.verbose = false;
+    sqm.verbose = true;   //debug
     sqm.config.gain = TSL2591_GAIN_MAX;
     sqm.config.time = TSL2591_INTEGRATIONTIME_600MS;
     sqm.configSensor();
@@ -191,8 +191,7 @@ void processCommand(const char *command)
     ReadWeather();
     if (ReadEEAutoTempCal())
       sqm.setTemperature(temp); // temp call
-    sqm.config.gain = TSL2591_GAIN_MAX;
-    sqm.config.time = TSL2591_INTEGRATIONTIME_600MS;
+ 
     sqm.takeReading();
 
     Serial.print("a,");
@@ -203,9 +202,8 @@ void processCommand(const char *command)
     Serial.print(sqm.ir);
     Serial.print(",vis:");
     Serial.print(sqm.vis);
-    Serial.print(",adjvis:");
-    Serial.print(adjustedVisible);
-    Serial.print(",");
+
+    Serial.print(",mag:");
     Serial.print(sqm.mpsas);
     Serial.print(",dmpsas:");
     Serial.print(sqm.dmpsas);
@@ -220,11 +218,15 @@ void processCommand(const char *command)
     dtostrf(sqm.lux, 10, 6, luxBuffer); // 7 is the minimum width, 3 is the number of decimal places
 
     Serial.print(luxBuffer);
-    Serial.print(",mag:");
-    char magBuffer[10];
-    dtostrf(mag, 7, 3, magBuffer); // 7 is the minimum width, 3 is the number of decimal places
 
-    Serial.println(magBuffer);
+
+    Serial.print(",temp:");
+    Serial.print(temp);
+    Serial.print(",hum:");
+    Serial.print(hum);
+    Serial.print(",pres:");
+    Serial.print(pres);
+    Serial.println();
   }
   else if (command[0] == 'z')
   {

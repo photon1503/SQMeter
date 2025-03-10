@@ -149,6 +149,7 @@ class SQM_TSL2591 : public Adafruit_Sensor
   uint8_t   read8   ( uint8_t reg );
 
   float     calculateLux              ( uint16_t ch0, uint16_t ch1 );
+  float     calculateLux2              ( uint16_t ch0, uint16_t ch1 );
   void      setGain                   ( tsl2591Gain_t gain );
   void      setTiming                 ( tsl2591IntegrationTime_t integration );
   void      setCalibrationOffset      ( float calibrationOffset);

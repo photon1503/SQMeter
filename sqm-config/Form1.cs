@@ -10,14 +10,24 @@ namespace sqm_config
         private SQMSerial _sqmSerial;
         private bool pauseReading = false;
         private System.Windows.Forms.Timer timer;
+        private bool isConnected = false;
 
         public Form1()
         {
             InitializeComponent();
+            Buttons(false);
         }
 
         private async void button1_Click(object sender, EventArgs e)
         {
+            if (isConnected)
+            {
+                _sqmSerial.Close();
+                button1.Text = "Connect";
+                isConnected = false;
+                Buttons(false);
+                return;
+            }
             // get the selected COM port
             string selectedPort = cmbCOMports.SelectedItem.ToString();
             // open the selected COM port
@@ -50,6 +60,27 @@ namespace sqm_config
                     // MessageBox.Show("Failed to connect to the SQM");
                 }
             }
+
+            if (success)
+            {
+                isConnected = true;
+                button1.Text = "Disconnect";
+
+                // enable all buttons
+                Buttons(true);
+            }
+        }
+
+        private void Buttons(bool val)
+        {
+            btnReadConfig.Enabled = val;
+            btnSQMCal.Enabled = val;
+            btnReset.Enabled = val;
+            btnTempOffsetWrite.Enabled = val;
+            chkTempOffset.Enabled = val;
+            chkRefresh.Enabled = val;
+            button2.Enabled = val;
+            button3.Enabled = val;
         }
 
         private async Task RefreshSQMLUAsync()
@@ -95,28 +126,27 @@ namespace sqm_config
 
             if (response.StartsWith("a,"))
             {
-                lblAdvanced.Text = GetSplitValue(response, "full");
-                lblAdvanced.Text += Environment.NewLine;
-                lblAdvanced.Text += GetSplitValue(response, "ir");
-                lblAdvanced.Text += Environment.NewLine;
-                lblAdvanced.Text += GetSplitValue(response, "vis");
-                lblAdvanced.Text += Environment.NewLine;
-                lblAdvanced.Text += GetSplitValue(response, "dmpsas");
-                lblAdvanced.Text += Environment.NewLine;
-                lblAdvanced.Text += GetSplitValue(response, "integration");
-                lblAdvanced.Text += Environment.NewLine;
-                lblAdvanced.Text += GetSplitValue(response, "gain") + " x";
-                lblAdvanced.Text += Environment.NewLine;
-                lblAdvanced.Text += GetSplitValue(response, "niter");
-                lblAdvanced.Text += Environment.NewLine;
-                lblAdvanced.Text += GetSplitValue(response, "lux") + " lx";
-                lblAdvanced.Text += Environment.NewLine;
-                lblAdvanced.Text += GetSplitValue(response, "temp") + " °C";
-                lblAdvanced.Text += Environment.NewLine;
-                lblAdvanced.Text += GetSplitValue(response, "hum") + " %";
-                lblAdvanced.Text += Environment.NewLine;
-                lblAdvanced.Text += GetSplitValue(response, "pres");
-                lblAdvanced.Text += Environment.NewLine;
+                lblFull.Text = GetSplitValue(response, "full");
+
+                lblIR.Text = GetSplitValue(response, "ir");
+
+                lblVIS.Text = GetSplitValue(response, "vis");
+
+                lblDMPSAS.Text = GetSplitValue(response, "dmpsas");
+
+                lblExp.Text = GetSplitValue(response, "integration");
+
+                lblGain.Text = GetSplitValue(response, "gain") + " x";
+
+                lblNiter.Text = GetSplitValue(response, "niter");
+
+                lblLux.Text = GetSplitValue(response, "lux");
+
+                lblTemp.Text = GetSplitValue(response, "temp") + " °C";
+
+                lblHum.Text = GetSplitValue(response, "hum") + " %";
+
+                lblPress.Text = GetSplitValue(response, "pres");
 
                 lblMag.Text = GetSplitValue(response, "mag");
             }

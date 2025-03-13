@@ -1,103 +1,108 @@
 # SQMeter
 
-Arduino-compatible Sky Quality Meter using the TSL2591 and BME280 sensor
+An **Arduino-compatible Sky Quality Meter** leveraging the **TSL2591** and **BME280** sensors for precise environmental monitoring.
 
-* Ability to store calibration factors for SQM and Temperature in EEPROM
-* Temperature compensation for the TSL2591
+---
 
-* Windows standalone program for monitoring and configuration
+## Key Features
 
-* SQM-LU serial protocol, compatible to standard ASCOM driver for Sky Quality Meter and Temperature
+- **EEPROM Storage**: Save calibration factors for SQM and temperature directly in EEPROM.
+- **Temperature Compensation**: Enhanced accuracy for the TSL2591 sensor with temperature compensation.
+- **Windows Monitoring Tool**: Standalone program for real-time monitoring and configuration.
+  ![Windows Monitoring Tool](images/image-1.png)
+- **SQM-LU Serial Protocol**: Compatible with the standard ASCOM driver for Sky Quality Meter and Temperature.
+- **Extended Protocol**: Includes additional data points.
+- **ASCOM Platform 7 Driver**: Fully compatible with Weather Conditions.
+  - **Data Points**:
+    1. Sky Quality
+    2. Sky Brightness
+    3. Temperature
+    4. Humidity
+    5. Pressure
+    6. Dew Point (calculated)
+  - **Customizable Rolling Average**: Configure rolling averages for measurements over a specified time period.
+  - **ASCOM Conformance Test**: Successfully passed.
+    ![ASCOM Driver Interface](images/image.png)
 
-* Extended protocal with additional data
-* ASCOM Platform 7 driver for Weather Conditions
-
-- Sky Quality 
-- Sky Brightness
-- Temperature
-- Humidity
-- Pressure
-- Dew Point (calculated)
-
-- Option to configure rolling average of the measurements for a given time period
-
-- ASCOM Conform Test passed
-
+---
 
 ## References
 
-https://github.com/romanhujer/SQM
-https://github.com/gshau/SQM_TSL2591/
+- [SQM GitHub Repository](https://github.com/romanhujer/SQM)
+- [SQM_TSL2591 GitHub Repository](https://github.com/gshau/SQM_TSL2591/)
 
-## Links
+---
 
-[ASCOM driver for SQM-LU](https://www.dizzy.eu/downloads.html)
+## Useful Links
 
+- [ASCOM Driver for SQM-LU](https://www.dizzy.eu/downloads.html)
 
-## Building
+---
 
-Necessary components
+## Building Instructions
 
-* Arduino Nano
-* TSL2591 light sensor
-* BME280 temperature sensor
-* 3.5mm M12 lens
-* M12 lens holder
-* 3D printed case
+### Required Components
 
-## Features
+- **Arduino Nano**
+- **TSL2591 Light Sensor**
+- **BME280 Temperature Sensor**
+- **3.5mm M12 Lens**
+- **M12 Lens Holder**
+- **3D Printed Case**
 
-### USB Control mode use derived Unihedron serial protokol
+![3D Printed Case](image.png)
 
-#### Box Info
-* **Request:** `ix`
-* **Response:** `i,00000002,00000003,00000001,20191012`
+---
 
-#### Read Data  
-* **Request:** `rx`  
-* **Response:** `r, 10.28m,0000000000Hz,0000000002c,000005.000s, 026.2C`
-* **Request:** `ux`  
-* **Response:** `u, 10.33m,0000000000Hz,0000000004c,000005.000s, 026.4C`
+## Serial Protocol
 
-#### Read Config Data  
-* **Request:** `gx`
-* **Response:** `g, 000.00m, 000.0C,TC:Y`
- 
-#### Write SQM Offset to EEPROM (value range: -25m to 25m)
-* **Negative value:**  
-  * **Request:** `zcal1-0.05x`
-  * **Response:** `z,1,-00.05m`
-* **Positive value:**  
-  * **Request:** `zcal100.01x`
-  * **Response:** `z,1, 00.01m`
+### Box Information
+- **Request:** `ix`
+- **Response:** `i,00000002,00000003,00000001,20191012`
 
-#### Erase EEPROM and set to default value
-* **Request:** `zcalDx`
-* **Response:** `zxdL`
+### Read Data
+- **Request:** `rx`  
+- **Response:** `r, 10.28m,0000000000Hz,0000000002c,000005.000s, 026.2C`
+- **Request:** `ux`  
+- **Response:** `u, 10.33m,0000000000Hz,0000000004c,000005.000s, 026.4C`
 
-### Write Temperature offset to EEPROM value range (-50°C ... 50°C)
-Negative value: 
-* Request:  zcal2-1.5x
-* Response: z,2,-01.5C 
+### Read Configuration Data
+- **Request:** `gx`
+- **Response:** `g, 000.00m, 000.0C,TC:Y`
 
-Positive value:  
-* Request:  zcal2 00.5x
-* Response: z,2, 00.5C 
+### Write SQM Offset
+*(Value range: -25m to 25m)*
+- **Negative Value:**  
+  - **Request:** `zcal1-0.05x`
+  - **Response:** `z,1,-00.05m`
+- **Positive Value:**  
+  - **Request:** `zcal100.01x`
+  - **Response:** `z,1, 00.01m`
 
-### Enabel SQM  temperature calibration 
+### Erase EEPROM and Reset to Default Values
+- **Request:** `zcalDx`
+- **Response:** `zxdL`
 
-* Request: zcalex
-* Response: zxeaL 
+### Write Temperature Offset
+*(Value range: -50Â°C to 50Â°C)*
+- **Negative Value:**  
+  - **Request:** `zcal2-1.5x`
+  - **Response:** `z,2,-01.5C`
+- **Positive Value:**  
+  - **Request:** `zcal2 00.5x`
+  - **Response:** `z,2, 00.5C`
 
-#### Disable SQM  temperature calibration   (note lower case "d")
+### Enable SQM Temperature Calibration
+- **Request:** `zcalex`
+- **Response:** `zxeaL`
 
-* Request:  zcaldx
-* Response: zxdaL 
+### Disable SQM Temperature Calibration
+*(Note: Lowercase "d")*
+- **Request:** `zcaldx`
+- **Response:** `zxdaL`
 
-### Enable verbose mode
+### Enable Verbose Mode
+- **Request:** `vx`
 
-* Request: vx
-
-#### Disable verbose mode
-
-* Request: yx
+### Disable Verbose Mode
+- **Request:** `yx`

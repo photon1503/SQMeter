@@ -86,6 +86,7 @@ namespace sqm_config
             checkBox1 = new CheckBox();
             backgroundWorker1 = new System.ComponentModel.BackgroundWorker();
             backgroundWorker2 = new System.ComponentModel.BackgroundWorker();
+            backgroundWorker3 = new System.ComponentModel.BackgroundWorker();
             Version.SuspendLayout();
             groupBox1.SuspendLayout();
             groupBox2.SuspendLayout();
@@ -361,7 +362,7 @@ namespace sqm_config
             // label18
             // 
             label18.AutoSize = true;
-            label18.Location = new Point(347, 84);
+            label18.Location = new Point(369, 84);
             label18.Name = "label18";
             label18.Size = new Size(40, 15);
             label18.TabIndex = 12;
@@ -442,11 +443,12 @@ namespace sqm_config
             // label6
             // 
             label6.AutoSize = true;
-            label6.Location = new Point(34, 84);
+            label6.Location = new Point(51, 84);
             label6.Name = "label6";
             label6.Size = new Size(78, 15);
             label6.TabIndex = 1;
             label6.Text = "mags/arcsec²";
+            label6.Click += label6_Click;
             // 
             // lblMag
             // 
@@ -613,7 +615,7 @@ namespace sqm_config
             // 
             // button3
             // 
-            button3.Location = new Point(358, 51);
+            button3.Location = new Point(357, 610);
             button3.Name = "button3";
             button3.Size = new Size(164, 23);
             button3.TabIndex = 9;
@@ -636,7 +638,7 @@ namespace sqm_config
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(551, 629);
+            ClientSize = new Size(551, 638);
             Controls.Add(checkBox1);
             Controls.Add(button3);
             Controls.Add(chkRefresh);
@@ -727,5 +729,6 @@ namespace sqm_config
         private CheckBox checkBox1;
         private System.ComponentModel.BackgroundWorker backgroundWorker1;
         private System.ComponentModel.BackgroundWorker backgroundWorker2;
+        private System.ComponentModel.BackgroundWorker backgroundWorker3;
     }
 }

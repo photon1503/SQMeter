@@ -176,28 +176,35 @@ namespace ASCOM.SQMeter.ObservingConditions
                 SharedResources.SharedSerial.ReceiveTimeout = pollingInterval;
                 SharedResources.SharedSerial.Connected = true;
 
-                // clear any buffered data
-                SharedResources.SharedSerial.ClearBuffers();
+                connectedState = initSQM();
 
-                //receive the welcome message
-                string welcome = SharedResources.SharedSerial.ReceiveTerminated("\r\n");
-
-                // send "ix" to the device to get the current value
-                SharedResources.SharedSerial.Transmit("ix");
-                string response = SharedResources.SharedSerial.ReceiveTerminated("\r\n");
-
-                if (!response.StartsWith("i,"))
-                {
-                    throw new ASCOM.InvalidValueException($"Unexpected response from device: {response}");
-                }
-
-                connectedState = true;
-                LogMessage("InitialiseHardware", $"Response from device: {response}");
                 LogMessage("InitialiseHardware", $"Connecting to hardware.");
 
                 LogMessage("InitialiseHardware", $"One-off initialisation complete.");
                 runOnce = true; // Set the flag to ensure that this code is not run again
             }
+        }
+
+        private static bool initSQM()
+        {
+            SharedResources.SharedSerial.Connected = true;
+
+            // clear any buffered data
+            SharedResources.SharedSerial.ClearBuffers();
+
+            //receive the welcome message
+            string welcome = SharedResources.SharedSerial.ReceiveTerminated("\r\n");
+
+            // send "ix" to the device to get the current value
+            SharedResources.SharedSerial.Transmit("ix");
+            string response = SharedResources.SharedSerial.ReceiveTerminated("\r\n");
+
+            if (!response.StartsWith("i,"))
+            {
+                throw new ASCOM.InvalidValueException($"Unexpected response from device: {response}");
+            }
+            LogMessage("initSQM", $"Response from device: {response}");
+            return true;
         }
 
         // PUBLIC COM INTERFACE IObservingConditionsV2 IMPLEMENTATION
@@ -474,6 +481,7 @@ namespace ASCOM.SQMeter.ObservingConditions
         public static void SetConnected(Guid uniqueId, bool newState)
         {
             // Check whether we are connecting or disconnecting
+            LogMessage("SetConnected", $"Unique ID: {uniqueId}, New state: {newState}");
             if (newState) // We are connecting
             {
                 // Check whether this driver instance has already connected
@@ -490,7 +498,9 @@ namespace ASCOM.SQMeter.ObservingConditions
                         //
                         // Add hardware connect logic here
                         //
-                        SharedResources.SharedSerial.Connected = true;
+                        //SharedResources.SharedSerial.Connected = true;
+                        //initSQM();
+
                         Refresh();
 
                         //start timer
@@ -526,7 +536,6 @@ namespace ASCOM.SQMeter.ObservingConditions
                     // Remove the driver unique ID to the connected list
                     uniqueIds.Remove(uniqueId);
                     LogMessage("SetConnected", $"Unique id {uniqueId} removed from the connection list.");
-                    connectedState = false;
 
                     // Check whether there are now any connected driver instances
                     if (uniqueIds.Count == 0) // There are no connected driver instances so disconnect from the hardware
@@ -535,7 +544,7 @@ namespace ASCOM.SQMeter.ObservingConditions
                         // Add hardware disconnect logic here
                         //
                         _timer.Stop();
-                        SharedResources.SharedSerial.Connected = false;
+                        //SharedResources.SharedSerial.Connected = false;
                     }
                     else // Other device instances are connected so do not disconnect the hardware
                     {
@@ -543,6 +552,7 @@ namespace ASCOM.SQMeter.ObservingConditions
                         LogMessage("SetConnected", $"Hardware already connected.");
                     }
                 }
+                connectedState = false;
             }
 
             // Log the current connected state

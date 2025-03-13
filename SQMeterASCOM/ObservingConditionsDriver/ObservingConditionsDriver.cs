@@ -44,7 +44,17 @@ namespace ASCOM.SQMeter.ObservingConditions
         internal static string DriverDescription; // The value is retrieved from the ServedClassName attribute in the class initialiser.
 
         // connectedState holds the connection state from this driver instance's perspective, as opposed to the local server's perspective, which may be different because of other client connections.
-        internal bool connectedState; // The connected state from this driver's perspective)
+        internal bool connectedState
+        {
+            get
+            {
+                return ObservingConditionsHardware.connectedState;
+            }
+            set
+            {
+                ObservingConditionsHardware.connectedState = value;
+            }
+        }
 
         internal TraceLogger tl; // Trace logger object to hold diagnostic information just for this instance of the driver, as opposed to the local server's log, which includes activity from all driver instances.
         private bool disposedValue;
@@ -379,11 +389,9 @@ namespace ASCOM.SQMeter.ObservingConditions
                 try
                 {
                     // Returns the driver's connection state rather than the local server's connected state, which could be different because there may be other client connections still active.
-                    LogMessage("Connected Get", ObservingConditionsHardware.connectedState.ToString());
-                    return ObservingConditionsHardware.connectedState;
+                    LogMessage("Connected Get --", connectedState.ToString());
 
-                    //LogMessage("Connected Get", SharedResources.SharedSerial.Connected.ToString());
-                    //return SharedResources.SharedSerial.Connected;
+                    return connectedState;
                 }
                 catch (Exception ex)
                 {
@@ -403,17 +411,20 @@ namespace ASCOM.SQMeter.ObservingConditions
 
                     if (value)
                     {
+                        connectedState = true;
+
                         LogMessage("Connected Set", "Connecting to device...");
                         ObservingConditionsHardware.SetConnected(uniqueId, true);
                         LogMessage("Connected Set", "Connected OK");
                     }
                     else
                     {
+                        connectedState = false;
+
                         LogMessage("Connected Set", "Disconnecting from device...");
                         ObservingConditionsHardware.SetConnected(uniqueId, false);
                         LogMessage("Connected Set", "Disconnected OK");
                     }
-                    connectedState = ObservingConditionsHardware.connectedState;
                 }
                 catch (Exception ex)
                 {

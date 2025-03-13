@@ -326,5 +326,10 @@ namespace sqm_config
                 string response = await _sqmSerial.SendCommandAsync("yx");
             }
         }
+
+        private void label6_Click(object sender, EventArgs e)
+        {
+
+        }
     }
 }

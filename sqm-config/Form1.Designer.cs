@@ -83,6 +83,7 @@ namespace sqm_config
             button2 = new Button();
             chkRefresh = new CheckBox();
             button3 = new Button();
+            checkBox1 = new CheckBox();
             Version.SuspendLayout();
             groupBox1.SuspendLayout();
             groupBox2.SuspendLayout();
@@ -252,81 +253,81 @@ namespace sqm_config
             lblPress.AutoSize = true;
             lblPress.Location = new Point(415, 156);
             lblPress.Name = "lblPress";
-            lblPress.Size = new Size(47, 15);
+            lblPress.Size = new Size(12, 15);
             lblPress.TabIndex = 24;
-            lblPress.Text = "lblPress";
+            lblPress.Text = "-";
             // 
             // lblHum
             // 
             lblHum.AutoSize = true;
             lblHum.Location = new Point(415, 141);
             lblHum.Name = "lblHum";
-            lblHum.Size = new Size(47, 15);
+            lblHum.Size = new Size(12, 15);
             lblHum.TabIndex = 23;
-            lblHum.Text = "lblHum";
+            lblHum.Text = "-";
             // 
             // lblTemp
             // 
             lblTemp.AutoSize = true;
             lblTemp.Location = new Point(415, 126);
             lblTemp.Name = "lblTemp";
-            lblTemp.Size = new Size(50, 15);
+            lblTemp.Size = new Size(12, 15);
             lblTemp.TabIndex = 22;
-            lblTemp.Text = "lblTemp";
+            lblTemp.Text = "-";
             // 
             // lblNiter
             // 
             lblNiter.AutoSize = true;
             lblNiter.Location = new Point(249, 156);
             lblNiter.Name = "lblNiter";
-            lblNiter.Size = new Size(46, 15);
+            lblNiter.Size = new Size(12, 15);
             lblNiter.TabIndex = 21;
-            lblNiter.Text = "lblNiter";
+            lblNiter.Text = "-";
             // 
             // lblGain
             // 
             lblGain.AutoSize = true;
             lblGain.Location = new Point(249, 141);
             lblGain.Name = "lblGain";
-            lblGain.Size = new Size(44, 15);
+            lblGain.Size = new Size(12, 15);
             lblGain.TabIndex = 20;
-            lblGain.Text = "lblGain";
+            lblGain.Text = "-";
             // 
             // lblExp
             // 
             lblExp.AutoSize = true;
             lblExp.Location = new Point(249, 126);
             lblExp.Name = "lblExp";
-            lblExp.Size = new Size(38, 15);
+            lblExp.Size = new Size(12, 15);
             lblExp.TabIndex = 19;
-            lblExp.Text = "lblExp";
+            lblExp.Text = "-";
             // 
             // lblDMPSAS
             // 
             lblDMPSAS.AutoSize = true;
             lblDMPSAS.Location = new Point(80, 171);
             lblDMPSAS.Name = "lblDMPSAS";
-            lblDMPSAS.Size = new Size(66, 15);
+            lblDMPSAS.Size = new Size(12, 15);
             lblDMPSAS.TabIndex = 18;
-            lblDMPSAS.Text = "lblDMPSAS";
+            lblDMPSAS.Text = "-";
             // 
             // lblVIS
             // 
             lblVIS.AutoSize = true;
             lblVIS.Location = new Point(80, 156);
             lblVIS.Name = "lblVIS";
-            lblVIS.Size = new Size(36, 15);
+            lblVIS.Size = new Size(12, 15);
             lblVIS.TabIndex = 17;
-            lblVIS.Text = "lblVIS";
+            lblVIS.Text = "-";
             // 
             // lblIR
             // 
             lblIR.AutoSize = true;
             lblIR.Location = new Point(80, 141);
             lblIR.Name = "lblIR";
-            lblIR.Size = new Size(30, 15);
+            lblIR.Size = new Size(12, 15);
             lblIR.TabIndex = 16;
-            lblIR.Text = "lblIR";
+            lblIR.Text = "-";
             // 
             // label21
             // 
@@ -423,9 +424,9 @@ namespace sqm_config
             lblFull.AutoSize = true;
             lblFull.Location = new Point(80, 126);
             lblFull.Name = "lblFull";
-            lblFull.Size = new Size(39, 15);
+            lblFull.Size = new Size(12, 15);
             lblFull.TabIndex = 5;
-            lblFull.Text = "lblFull";
+            lblFull.Text = "-";
             // 
             // label10
             // 
@@ -618,11 +619,23 @@ namespace sqm_config
             button3.UseVisualStyleBackColor = true;
             button3.Click += button3_Click;
             // 
+            // checkBox1
+            // 
+            checkBox1.AutoSize = true;
+            checkBox1.Location = new Point(32, 607);
+            checkBox1.Name = "checkBox1";
+            checkBox1.Size = new Size(188, 19);
+            checkBox1.TabIndex = 10;
+            checkBox1.Text = "Verbose mode (for debugging)";
+            checkBox1.UseVisualStyleBackColor = true;
+            checkBox1.CheckedChanged += checkBox1_CheckedChanged;
+            // 
             // Form1
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(551, 626);
+            ClientSize = new Size(551, 629);
+            Controls.Add(checkBox1);
             Controls.Add(button3);
             Controls.Add(chkRefresh);
             Controls.Add(button2);
@@ -651,13 +664,10 @@ namespace sqm_config
 
         private void Form1_Load(object sender, EventArgs e)
         {
-            InitializeCOMports();
+           // InitializeCOMports();
         }
         // initialize the ComboBox cmbCOMports with the COM ports
-        private void InitializeCOMports()
-        {
-            cmbCOMports.Items.AddRange(System.IO.Ports.SerialPort.GetPortNames());
-        }
+       
 
         private ComboBox cmbCOMports;
         private Label lblPort;
@@ -712,5 +722,6 @@ namespace sqm_config
         private Label label17;
         private Label label16;
         private Label label15;
+        private CheckBox checkBox1;
     }
 }

@@ -2,6 +2,7 @@ using System;
 using System.Globalization;
 using System.IO.Ports;
 using System.Text;
+using sqm_config.Properties;
 
 namespace sqm_config
 {
@@ -16,6 +17,14 @@ namespace sqm_config
         {
             InitializeComponent();
             Buttons(false);
+
+            cmbCOMports.Items.AddRange(System.IO.Ports.SerialPort.GetPortNames());
+
+            string savedPort = Properties.Settings.Default.SelectedCOMport;
+            if (!string.IsNullOrEmpty(savedPort))
+            {
+                cmbCOMports.SelectedItem = savedPort;
+            }
         }
 
         private async void button1_Click(object sender, EventArgs e)
@@ -65,9 +74,16 @@ namespace sqm_config
             {
                 isConnected = true;
                 button1.Text = "Disconnect";
+                Properties.Settings.Default.SelectedCOMport = selectedPort;
+                Properties.Settings.Default.Save();
 
                 // enable all buttons
                 Buttons(true);
+
+                // get data
+                await RefreshAsync();
+                //get config
+                ReadConfig();
             }
         }
 
@@ -134,7 +150,7 @@ namespace sqm_config
 
                 lblDMPSAS.Text = GetSplitValue(response, "dmpsas");
 
-                lblExp.Text = GetSplitValue(response, "integration");
+                lblExp.Text = GetSplitValue(response, "integration" + " ms");
 
                 lblGain.Text = GetSplitValue(response, "gain") + " x";
 
@@ -151,10 +167,6 @@ namespace sqm_config
                 lblMag.Text = GetSplitValue(response, "mag");
             }
         }
-
-        /* split key:value and return vale
-         * exmpale a,,full:12193,ir:2422,vis:9771,mag:13.805,dmpsas:0.01,integration:600.00,gain:9876.00,niter:1,lux:36.653781,temp:21.03,hum:63.12,pres:1326.49
-         * */
 
         private string GetSplitValue(string response, string key)
         {
@@ -180,7 +192,7 @@ namespace sqm_config
             txtLog.AppendText($"Received: {data}\r\n");
         }
 
-        private async void btnReadConfig_Click(object sender, EventArgs e)
+        private async void ReadConfig()
         {
             txtLog.AppendText($"Sending: gx\r\n");
             string response = await _sqmSerial.SendCommandAsync("gx");
@@ -198,6 +210,11 @@ namespace sqm_config
                 split[3] = split[3].Substring(0, split[3].Length - 2);
                 chkTempOffset.Checked = split[3] == "Y";
             }
+        }
+
+        private async void btnReadConfig_Click(object sender, EventArgs e)
+        {
+            ReadConfig();
         }
 
         private async void button2_Click(object sender, EventArgs e)
@@ -295,6 +312,18 @@ namespace sqm_config
             else
             {
                 string response = await _sqmSerial.SendCommandAsync("zcaldx");
+            }
+        }
+
+        private async void checkBox1_CheckedChanged(object sender, EventArgs e)
+        {
+            if (checkBox1.Checked)
+            {
+                string response = await _sqmSerial.SendCommandAsync("vx");
+            }
+            else
+            {
+                string response = await _sqmSerial.SendCommandAsync("yx");
             }
         }
     }

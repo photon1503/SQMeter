@@ -135,6 +135,15 @@ void processCommand(const char *command)
 
     // Reading request
   }
+  else if (strcmp(command, "v") == 0)
+  {
+    sqm.verbose = true;
+    Serial.println("v,1");
+  }
+  else if (strcmp(command, "y")== 0) {
+    sqm.verbose = false;
+    Serial.println("y,0");
+  }
   else if (strcmp(command, "r") == 0)
   {
     ReadWeather();

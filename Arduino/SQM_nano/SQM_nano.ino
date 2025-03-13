@@ -93,7 +93,7 @@ void setup()
   void readSQM(void);
   if (sqm.begin())
   {
-    sqm.verbose = true;   //debug
+    sqm.verbose = false; // debug
     sqm.config.gain = TSL2591_GAIN_MAX;
     sqm.config.time = TSL2591_INTEGRATIONTIME_600MS;
     sqm.configSensor();
@@ -104,10 +104,10 @@ void setup()
     Serial.println("TSL2591 not found");
   }
 
-  SqmCalOffset = ReadEESqmCalOffset();     // SQM Calibration offset from EEPROM
-  TempCalOffset = ReadEETempCalOffset();   // Temperature Calibration offset from EEPROM
+  SqmCalOffset = ReadEESqmCalOffset();   // SQM Calibration offset from EEPROM
+  TempCalOffset = ReadEETempCalOffset(); // Temperature Calibration offset from EEPROM
 
-  sqm.setCalibrationOffset(SqmCalOffset);  // call offset
+  sqm.setCalibrationOffset(SqmCalOffset); // call offset
 
 } // end of Setup
 
@@ -143,12 +143,14 @@ void processCommand(const char *command)
     // mySQM();
     sqm.takeReading();
 
-    sqm_string = String((sqm.mpsas < 0) ? -sqm.mpsas : sqm.mpsas, 2);
+    float mag = sqm.mpsas + ReadEESqmCalOffset();
+
+    sqm_string = String((mag < 0) ? -mag : mag, 2);
     while (sqm_string.length() < 5)
     {
       sqm_string = '0' + sqm_string;
     }
-    _sign = (sqm.mpsas < 0) ? '-' : ' ';
+    _sign = (mag < 0) ? '-' : ' ';
     sqm_string = _sign + sqm_string;
 
     temp = get_temperature();
@@ -182,7 +184,8 @@ void processCommand(const char *command)
     _sign = (TempCalOffset < 0) ? '-' : ' ';
     temp_string = _sign + temp_string;
     oled[4] = '0';
-    Serial.println("g," + sqm_string + "m," + temp_string + "C,TC:" + "N," + oled + ",DC:");
+    String autocal = ReadEEAutoTempCal() ? "Y" : "N";
+    Serial.println("g," + sqm_string + "m," + temp_string + "C," + autocal );
   }
   // advanced response
 
@@ -191,11 +194,11 @@ void processCommand(const char *command)
     ReadWeather();
     if (ReadEEAutoTempCal())
       sqm.setTemperature(temp); // temp call
- 
+
     sqm.takeReading();
 
     Serial.print("a,");
-    //Serial.print(luminosity);
+    // Serial.print(luminosity);
     Serial.print(",full:");
     Serial.print(sqm.full);
     Serial.print(",ir:");
@@ -204,7 +207,8 @@ void processCommand(const char *command)
     Serial.print(sqm.vis);
 
     Serial.print(",mag:");
-    Serial.print(sqm.mpsas);
+    float mag = sqm.mpsas + ReadEESqmCalOffset();
+    Serial.print(mag , 3);
     Serial.print(",dmpsas:");
     Serial.print(sqm.dmpsas);
     Serial.print(",integration:");
@@ -214,12 +218,7 @@ void processCommand(const char *command)
     Serial.print(",niter:");
     Serial.print(sqm.niter);
     Serial.print(",lux:");
-    char luxBuffer[16];
-    dtostrf(sqm.lux, 10, 6, luxBuffer); // 7 is the minimum width, 3 is the number of decimal places
-
-    Serial.print(luxBuffer);
-
-
+    Serial.print(sqm.lux, 6);
     Serial.print(",temp:");
     Serial.print(temp);
     Serial.print(",hum:");
@@ -248,7 +247,35 @@ void processCommand(const char *command)
         Serial.print((SqmCalOffset < 0) ? '-' : ' ');
         Serial.println(responseBuffer);
       }
+      // Calibration Temperature
+      else if (_x == '2')
+      {
 
+        char responseBuffer[16];
+        strncpy(responseBuffer, command + 5, sizeof(responseBuffer) - 1);
+        responseBuffer[sizeof(responseBuffer) - 1] = '\0';
+        TempCalOffset = atof(responseBuffer);
+        WriteEETempCalOffset(TempCalOffset);
+               snprintf(responseBuffer, sizeof(responseBuffer), "%05.2f", TempCalOffset);
+        Serial.print("z,2,");
+        Serial.print((TempCalOffset < 0) ? '-' : ' ');
+        Serial.println(responseBuffer);
+      }
+
+      // Enable temperature callibration
+      else if (_x == 'e')
+      {
+        WriteEEAutoTempCal(true);
+        Serial.println("zeaL");
+      }
+
+      // Disable temperature callibration (note lower case "d")
+      else if (_x == 'd')
+      {
+        WriteEEAutoTempCal(false);
+        //  sqm.resetTemperature();
+        Serial.println("zdaL");
+      }
       // Delete calibration (note upper case "D") - set default factory value see Setup.h
       else if (_x == 'D')
       {
@@ -262,6 +289,7 @@ void processCommand(const char *command)
     }
 
     SqmCalOffset = ReadEESqmCalOffset(); // SQM Calibration offset from EEPROM
+    TempCalOffset = ReadEETempCalOffset(); // Temperature Calibration offset from EEPROM
   }
 }
 

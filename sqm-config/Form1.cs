@@ -91,29 +91,53 @@ namespace sqm_config
             string response = await _sqmSerial.SendCommandAsync("ax");
 
             // response
-            // a,262149,4,0.00,1,0.00,5,9876.00,21.57
-            // luminosity, ir, adjustedIR,visible,adjustedVisible,full,gainscale,mag
+            // a,,full:12193,ir:2422,vis:9771,mag:13.805,dmpsas:0.01,integration:600.00,gain:9876.00,niter:1,lux:36.653781,temp:21.03,hum:63.12,pres:1326.49
+
             if (response.StartsWith("a,"))
             {
-                string[] split = response.Split(',');
-                lblAdvanced.Text = split[1];
+                lblAdvanced.Text = GetSplitValue(response, "full");
                 lblAdvanced.Text += Environment.NewLine;
-                lblAdvanced.Text += split[2];
+                lblAdvanced.Text += GetSplitValue(response, "ir");
                 lblAdvanced.Text += Environment.NewLine;
-                lblAdvanced.Text += split[3];
+                lblAdvanced.Text += GetSplitValue(response, "vis");
                 lblAdvanced.Text += Environment.NewLine;
-                lblAdvanced.Text += split[4];
+                lblAdvanced.Text += GetSplitValue(response, "dmpsas");
                 lblAdvanced.Text += Environment.NewLine;
-                lblAdvanced.Text += split[5];
+                lblAdvanced.Text += GetSplitValue(response, "integration");
                 lblAdvanced.Text += Environment.NewLine;
-                lblAdvanced.Text += split[6];
+                lblAdvanced.Text += GetSplitValue(response, "gain") + " x";
                 lblAdvanced.Text += Environment.NewLine;
-                lblAdvanced.Text += split[7].TrimStart();
+                lblAdvanced.Text += GetSplitValue(response, "niter");
+                lblAdvanced.Text += Environment.NewLine;
+                lblAdvanced.Text += GetSplitValue(response, "lux") + " lx";
+                lblAdvanced.Text += Environment.NewLine;
+                lblAdvanced.Text += GetSplitValue(response, "temp") + " °C";
+                lblAdvanced.Text += Environment.NewLine;
+                lblAdvanced.Text += GetSplitValue(response, "hum") + " %";
+                lblAdvanced.Text += Environment.NewLine;
+                lblAdvanced.Text += GetSplitValue(response, "pres");
                 lblAdvanced.Text += Environment.NewLine;
 
-                lblAdvanced.Text += split[8].TrimStart();
-                lblMag.Text = split[9];
+                lblMag.Text = GetSplitValue(response, "mag");
             }
+        }
+
+        /* split key:value and return vale
+         * exmpale a,,full:12193,ir:2422,vis:9771,mag:13.805,dmpsas:0.01,integration:600.00,gain:9876.00,niter:1,lux:36.653781,temp:21.03,hum:63.12,pres:1326.49
+         * */
+
+        private string GetSplitValue(string response, string key)
+        {
+            string[] split = response.Split(',');
+            foreach (string s in split)
+            {
+                if (s.Contains(key))
+                {
+                    string[] split2 = s.Split(':');
+                    return split2[1];
+                }
+            }
+            return "";
         }
 
         private void UpdateUI(string data)
@@ -139,6 +163,10 @@ namespace sqm_config
                 split[1] = split[1].Substring(0, split[1].Length - 1);
 
                 txtSQMcal.Text = split[1];
+                txtTempOffset.Text = split[2];
+                //remove trailing \r\n from split[3]
+                split[3] = split[3].Substring(0, split[3].Length - 2);
+                chkTempOffset.Checked = split[3] == "Y";
             }
         }
 
@@ -200,6 +228,44 @@ namespace sqm_config
         private void button3_Click(object sender, EventArgs e)
         {
             RefreshSQMLUAsync();
+        }
+
+        private void button5_Click(object sender, EventArgs e)
+        {
+        }
+
+        private async void btnTempOffsetWrite_Click(object sender, EventArgs e)
+        {
+            if (!double.TryParse(txtTempOffset.Text, NumberStyles.Float, CultureInfo.InvariantCulture, out double calValue))
+            {
+                MessageBox.Show("Invalid calibration value");
+                return;
+            }
+
+            if (calValue < -50 || calValue > 50)
+            {
+                MessageBox.Show("Calibration value must be between -50 and 50");
+                return;
+            }
+
+            // Format the command string based on the value of calValue
+            string command = calValue < 0
+                ? $"zcal2{calValue.ToString("0.00", CultureInfo.InvariantCulture)}x"
+                : $"zcal2{calValue.ToString("00.00", CultureInfo.InvariantCulture)}x";
+            txtLog.AppendText($"Sending: {command}\r\n");
+            string response = await _sqmSerial.SendCommandAsync(command);
+        }
+
+        private async void chkTempOffset_CheckedChanged(object sender, EventArgs e)
+        {
+            if (chkTempOffset.Checked)
+            {
+                string response = await _sqmSerial.SendCommandAsync("zcalex");
+            }
+            else
+            {
+                string response = await _sqmSerial.SendCommandAsync("zcaldx");
+            }
         }
     }
 }

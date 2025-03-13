@@ -95,7 +95,7 @@ boolean SQM_TSL2591::begin(void)
   // Note: by default, the device is in power down mode on bootup
   disable();
 
-  verbose = true;
+  verbose = false;
 
   return _initialized;
 }
@@ -404,103 +404,149 @@ void SQM_TSL2591::takeReading(void)
   uint32_t lum;
   niter = 0; // Initialize the iteration counter
 
-    while (niter < MAX_ITERATIONS) {
-        niter++;
-        configSensor();
-        lum = getFullLuminosity();
-        ir = lum >> 16;
-        full = lum & 0xFFFF;
-        calibrateReadingsForTemperature(ir, full);
-        vis = (full > ir) ? (full - ir) : 0; // Ensure vis is non-negative
+  bool gainAdjusted = false; // Track if gain was adjusted
 
-        // Check for saturation and adjust gain/integration time
-        if (full == 0xFFFF || ir == 0xFFFF) {
-            if (verbose) {
-                Serial.println("Sensor saturated, adjusting settings...");
-            }
-            if (_gain != TSL2591_GAIN_LOW) {
-                bumpGain(-1); // Decrease gain
-            } else if (_integration != TSL2591_INTEGRATIONTIME_100MS) {
-                bumpTime(-1); // Decrease integration time
-            } else {
-                if (verbose) {
-                    Serial.println("Already at lowest gain and integration time.");
-                }
-                break;
-            }
-            configSensor();
-            delay(50);
-            continue; // Retry reading with new settings
-        }
+  while (niter < MAX_ITERATIONS)
+  {
+    niter++;
+    configSensor();
+    lum = getFullLuminosity();
+    ir = lum >> 16;
+    full = lum & 0xFFFF;
+    calibrateReadingsForTemperature(ir, full);
 
-        // When intensity is faint at current gain setting
-        if ((float)vis < 128.) {
-            if (_gain == TSL2591_GAIN_MAX) {
-                if (_integration != TSL2591_INTEGRATIONTIME_600MS) {
-                    if (verbose) {
-                        Serial.println("Bumping integration up");
-                    }
-                    bumpTime(1);
-                    if (verbose)
-                        showConfig();
-                    configSensor();
-                    delay(50);
-                    continue; // Retry reading with new settings
-                } else {
-                    uint32_t fullCumulative = full;
-                    uint16_t visCumulative = vis, irCumulative = ir;
 
-                    // Do iterative sampling to gain statistical certainty
-                    while ((float)visCumulative < 128. && niter < MAX_ITERATIONS) {
-                        niter++;
-                        delay(50);
-                        lum = getFullLuminosity();
-                        ir = lum >> 16;
-                        full = lum & 0xFFFF;
-                        calibrateReadingsForTemperature(ir, full);
-                        fullCumulative += full;
-                        irCumulative += ir;
-                        visCumulative = (fullCumulative > irCumulative) ? (fullCumulative - irCumulative) : 0;
-                    }
-                    if ((float)fullCumulative > (float)irCumulative) {
-                        full = fullCumulative;
-                        ir = irCumulative;
-                        vis = visCumulative;
-                    } else {
-                        if (verbose) {
-                            Serial.println("Odd, full less than ir!  Rechecking...");
-                        }
-                        if (niter >= MAX_ITERATIONS) {
-                            if (verbose) {
-                                Serial.println("Lens might be covered. Stopping further readings.");
-                            }
-                            break;
-                        }
-                        continue; // Retry reading
-                    }
-                }
-            } else {
-                if (verbose) {
-                    Serial.println("Bumping gain up");
-                }
-                bumpGain(1);
-                if (verbose)
-                    showConfig();
-                configSensor();
-                delay(50);
-                continue; // Retry reading with new settings
-            }
-        }
+    vis = (full > ir) ? (full - ir) : 0; // Ensure vis is non-negative
+    if (ir > vis)
+      vis = 1.0;
 
-        // If we reach here, we have a valid reading
-        break;
+    if (verbose)
+    {
+      Serial.print("vis: ");
+      Serial.print(vis);
+      Serial.print(" ir: ");
+      Serial.print(ir);
+      Serial.print(" full: ");
+      Serial.println(full);
     }
+
+    // Check for saturation or faint light and adjust settings accordingly
+    if (full == 0xFFFF || ir == 0xFFFF)
+    {
+      // Sensor is saturated
+      if (verbose)
+      {
+        Serial.println("Sensor saturated, adjusting settings...");
+      }
+      if (_gain != TSL2591_GAIN_LOW)
+      {
+        // Decrease gain to reduce sensitivity
+        bumpGain(-1);
+        gainAdjusted = true;
+        if (verbose)
+        {
+          Serial.println("Decreased gain to avoid saturation.");
+        }
+      }
+      else if (_integration != TSL2591_INTEGRATIONTIME_100MS)
+      {
+        // Decrease integration time to reduce sensitivity
+        bumpTime(-1);
+        gainAdjusted = true;
+        if (verbose)
+        {
+          Serial.println("Decreased integration time to avoid saturation.");
+        }
+      }
+      else
+      {
+        // Already at minimum gain and integration time
+        if (verbose)
+        {
+          Serial.println("Sensor saturated at minimum settings. Cannot adjust further.");
+        }
+        break;
+      }
+    }
+    else if ((float)vis < 128.0)
+    {
+      // Light level is faint
+      if (verbose)
+      {
+        Serial.println("Light level is faint, adjusting settings...");
+      }
+      if (!gainAdjusted)
+      { // Only adjust if gain wasn't just decreased
+        if (_gain != TSL2591_GAIN_MAX)
+        {
+          // Increase gain to improve sensitivity
+          bumpGain(1);
+          if (verbose)
+          {
+            Serial.println("Increased gain for better sensitivity.");
+          }
+        }
+        else if (_integration != TSL2591_INTEGRATIONTIME_600MS)
+        {
+          // Increase integration time to improve sensitivity
+          bumpTime(1);
+          if (verbose)
+          {
+            Serial.println("Increased integration time for better sensitivity.");
+          }
+        }
+        else
+        {
+          // Already at maximum gain and integration time
+          if (verbose)
+          {
+            Serial.println("Sensor at maximum settings. Cannot adjust further.");
+          }
+          break;
+        }
+      }
+    }
+
+    else
+    {
+      // Light level is within optimal range
+      break;
+    }
+    // Reconfigure sensor with new settings and retry reading
+    configSensor();
+    delay(50); // Allow sensor to stabilize
+    continue;  // Retry reading with new settings
+  }
 
   float IR = (float)ir / (gainValue * integrationValue / 200.F * niter);
   float VIS = (float)vis / (gainValue * integrationValue / 200.F * niter);
-  mpsas = 12.6 - 1.086 * log(VIS) + _calibrationOffset;
-  dmpsas = 1.086 / sqrt((float)vis);
-  lux = calculateLux2(full, ir);
+
+  // Calculate mpsas (magnitude per square arcsecond)
+  if (VIS > 0)
+  {
+    mpsas = 12.6 - 1.086 * log(VIS) + _calibrationOffset;
+  }
+  else
+  {
+    mpsas = 25.0; // Default value for extremely low light
+  }
+
+  // Calculate dmpsas (uncertainty in mpsas)
+  if (vis > 0)
+  {
+    dmpsas = 1.086 / sqrt((float)vis);
+  }
+  else
+  {
+    dmpsas = 0.0; // Handle division by zero
+  }
+
+  if (dmpsas > 0.5)
+  {
+    // retry
+    takeReading();
+  }
+  lux = calculateLux(full, ir);
 }
 
 uint8_t SQM_TSL2591::read8(uint8_t reg)
@@ -554,29 +600,51 @@ void SQM_TSL2591::write8(uint8_t reg, uint8_t value)
   Wire.endTransmission();
 }
 
-float SQM_TSL2591::calculateLux2(uint16_t ch0, uint16_t ch1) {
+float SQM_TSL2591::calculateLux2(uint16_t ch0, uint16_t ch1)
+{
   // Check for overflow conditions first
-  if ((ch0 == 0xFFFF) || (ch1 == 0xFFFF)) {
-      // Signal an overflow
-      return 0.0;
+  if ((ch0 == 0xFFFF) || (ch1 == 0xFFFF))
+  {
+    // Signal an overflow
+    return 0.0;
   }
 
   // Calculate the ratio of the channel values (Channel1/Channel0)
   float ratio = (float)ch1 / (float)ch0;
 
+  // Adjust the channel values based on the integration time setting
+  float integrationFactor;
+
+  integrationFactor = integrationValue / 100.0;
+
+  // Scale the channel values
+  float d0 = (float)ch0 / (gainValue * integrationFactor);
+  float d1 = (float)ch1 / (gainValue * integrationFactor);
+
   // Calculate lux based on the formula provided in the datasheet
   float lux = 0.0;
-  if (ratio <= 0.5) {
-      lux = (0.0304 * ch0) - (0.062 * ch0 * pow(ratio, 1.4));
-  } else if (ratio <= 0.61) {
-      lux = (0.0224 * ch0) - (0.031 * ch1);
-  } else if (ratio <= 0.80) {
-      lux = (0.0128 * ch0) - (0.0153 * ch1);
-  } else if (ratio <= 1.30) {
-      lux = (0.00146 * ch0) - (0.00112 * ch1);
-  } else {
-      lux = 0.0;
+  if (ratio <= 0.5)
+  {
+    lux = (0.0304 * d0) - (0.062 * d0 * pow(ratio, 1.4));
   }
+  else if (ratio <= 0.61)
+  {
+    lux = (0.0224 * d0) - (0.031 * d1);
+  }
+  else if (ratio <= 0.80)
+  {
+    lux = (0.0128 * d0) - (0.0153 * d1);
+  }
+  else if (ratio <= 1.30)
+  {
+    lux = (0.00146 * d0) - (0.00112 * d1);
+  }
+  else
+  {
+    lux = 0.0;
+  }
+  // Adjust lux based on the gain and integration time
+  lux *= (gainValue * integrationFactor);
 
   return lux;
 }
@@ -644,19 +712,23 @@ float SQM_TSL2591::calculateLux(uint16_t ch0, uint16_t ch1) /*wbp*/
     break;
   }
 
-  // cpl = (ATIME * AGAIN) / DF
+  // Calculate counts per lux (cpl)
   cpl = (atime * again) / TSL2591_LUX_DF;
 
+  // Calculate lux1 and lux2
   lux1 = ((float)ch0 - (TSL2591_LUX_COEFB * (float)ch1)) / cpl;
-  lux2 = ((TSL2591_LUX_COEFC * (float)ch0) - (TSL2591_LUX_COEFD * (float)ch1)) /
-         cpl;
+  lux2 = ((TSL2591_LUX_COEFC * (float)ch0) - (TSL2591_LUX_COEFD * (float)ch1)) / cpl;
 
   // The highest value is the approximate lux equivalent
   lux = lux1 > lux2 ? lux1 : lux2;
 
-  // Signal I2C had no errors
-  //  return (uint32_t)lux;return (uint32_t)lux;
-  return lux; /*wbp*/
+  // Ensure lux is non-negative
+  if (lux < 0)
+  {
+    lux = 0;
+  }
+
+  return lux;
 }
 
 /**************************************************************************/

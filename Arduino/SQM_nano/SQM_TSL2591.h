@@ -80,7 +80,7 @@
 #define TSL2591_CONTROL_RESET     (0x80)
 
 //#define TSL2591_LUX_DF            (408.0F)
-#define TSL2591_LUX_DF            (735.0F)  /*wbp*/
+#define TSL2591_LUX_DF            (21000.0F) 
 #define TSL2591_LUX_COEFB         (1.64F)  // CH0 coefficient
 #define TSL2591_LUX_COEFC         (0.59F)  // CH1 coefficient A
 #define TSL2591_LUX_COEFD         (0.86F)  // CH2 coefficient B

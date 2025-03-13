@@ -48,6 +48,11 @@ namespace sqm_config
             label6 = new Label();
             lblMag = new Label();
             groupBox2 = new GroupBox();
+            chkTempOffset = new CheckBox();
+            label9 = new Label();
+            label8 = new Label();
+            txtTempOffset = new TextBox();
+            btnTempOffsetWrite = new Button();
             btnReset = new Button();
             label7 = new Label();
             label5 = new Label();
@@ -100,9 +105,9 @@ namespace sqm_config
             Version.Controls.Add(label3);
             Version.Controls.Add(label2);
             Version.Controls.Add(label1);
-            Version.Location = new Point(29, 283);
+            Version.Location = new Point(29, 325);
             Version.Name = "Version";
-            Version.Size = new Size(236, 115);
+            Version.Size = new Size(171, 162);
             Version.TabIndex = 3;
             Version.TabStop = false;
             Version.Text = "Version";
@@ -187,7 +192,7 @@ namespace sqm_config
             groupBox1.Controls.Add(lblMag);
             groupBox1.Location = new Point(29, 77);
             groupBox1.Name = "groupBox1";
-            groupBox1.Size = new Size(493, 200);
+            groupBox1.Size = new Size(493, 242);
             groupBox1.TabIndex = 4;
             groupBox1.TabStop = false;
             groupBox1.Text = "Measurement";
@@ -195,7 +200,7 @@ namespace sqm_config
             // lblAdvanced
             // 
             lblAdvanced.AutoSize = true;
-            lblAdvanced.Location = new Point(412, 59);
+            lblAdvanced.Location = new Point(357, 59);
             lblAdvanced.Name = "lblAdvanced";
             lblAdvanced.Size = new Size(12, 15);
             lblAdvanced.TabIndex = 3;
@@ -204,16 +209,16 @@ namespace sqm_config
             // lblAdvancedLabel
             // 
             lblAdvancedLabel.AutoSize = true;
-            lblAdvancedLabel.Location = new Point(329, 59);
+            lblAdvancedLabel.Location = new Point(291, 59);
             lblAdvancedLabel.Name = "lblAdvancedLabel";
-            lblAdvancedLabel.Size = new Size(66, 120);
+            lblAdvancedLabel.Size = new Size(60, 165);
             lblAdvancedLabel.TabIndex = 2;
-            lblAdvancedLabel.Text = "Luminosity\r\nIR\r\nAdj.IR\r\nVisible\r\nAdj.Vis.\r\nFull\r\nGain\r\nLux";
+            lblAdvancedLabel.Text = "💡Full\r\n🔴 IR\r\n👁 Visible\r\n𝚫 Dmpsas\r\n🕑 Exp\r\n✖ Gain\r\n⮔ Niter\r\n🔆 Lux\r\n🌡Temp\r\n🌢 Hum\r\n㍱ Press";
             // 
             // label6
             // 
             label6.AutoSize = true;
-            label6.Location = new Point(8, 84);
+            label6.Location = new Point(34, 84);
             label6.Name = "label6";
             label6.Size = new Size(78, 15);
             label6.TabIndex = 1;
@@ -231,22 +236,74 @@ namespace sqm_config
             // 
             // groupBox2
             // 
+            groupBox2.Controls.Add(chkTempOffset);
+            groupBox2.Controls.Add(label9);
+            groupBox2.Controls.Add(label8);
+            groupBox2.Controls.Add(txtTempOffset);
+            groupBox2.Controls.Add(btnTempOffsetWrite);
             groupBox2.Controls.Add(btnReset);
             groupBox2.Controls.Add(label7);
             groupBox2.Controls.Add(label5);
             groupBox2.Controls.Add(txtSQMcal);
             groupBox2.Controls.Add(btnSQMCal);
             groupBox2.Controls.Add(btnReadConfig);
-            groupBox2.Location = new Point(271, 283);
+            groupBox2.Location = new Point(206, 325);
             groupBox2.Name = "groupBox2";
-            groupBox2.Size = new Size(251, 115);
+            groupBox2.Size = new Size(316, 162);
             groupBox2.TabIndex = 5;
             groupBox2.TabStop = false;
             groupBox2.Text = "Config";
             // 
+            // chkTempOffset
+            // 
+            chkTempOffset.AutoSize = true;
+            chkTempOffset.Location = new Point(17, 117);
+            chkTempOffset.Name = "chkTempOffset";
+            chkTempOffset.Size = new Size(237, 19);
+            chkTempOffset.TabIndex = 14;
+            chkTempOffset.Text = "Enable SQM temperature compensation";
+            chkTempOffset.UseVisualStyleBackColor = true;
+            chkTempOffset.CheckedChanged += chkTempOffset_CheckedChanged;
+            // 
+            // label9
+            // 
+            label9.AutoSize = true;
+            label9.Font = new Font("Segoe UI", 7F);
+            label9.Location = new Point(13, 102);
+            label9.Name = "label9";
+            label9.Size = new Size(171, 12);
+            label9.TabIndex = 13;
+            label9.Text = "Valid calibration values are 50.0 to 50.0";
+            // 
+            // label8
+            // 
+            label8.AutoSize = true;
+            label8.Location = new Point(13, 79);
+            label8.Name = "label8";
+            label8.Size = new Size(72, 15);
+            label8.TabIndex = 12;
+            label8.Text = "Temp Offset";
+            // 
+            // txtTempOffset
+            // 
+            txtTempOffset.Location = new Point(87, 76);
+            txtTempOffset.Name = "txtTempOffset";
+            txtTempOffset.Size = new Size(69, 23);
+            txtTempOffset.TabIndex = 11;
+            // 
+            // btnTempOffsetWrite
+            // 
+            btnTempOffsetWrite.Location = new Point(249, 75);
+            btnTempOffsetWrite.Name = "btnTempOffsetWrite";
+            btnTempOffsetWrite.Size = new Size(61, 23);
+            btnTempOffsetWrite.TabIndex = 10;
+            btnTempOffsetWrite.Text = "Write";
+            btnTempOffsetWrite.UseVisualStyleBackColor = true;
+            btnTempOffsetWrite.Click += btnTempOffsetWrite_Click;
+            // 
             // btnReset
             // 
-            btnReset.Location = new Point(166, 82);
+            btnReset.Location = new Point(235, 132);
             btnReset.Name = "btnReset";
             btnReset.Size = new Size(75, 23);
             btnReset.TabIndex = 8;
@@ -282,9 +339,9 @@ namespace sqm_config
             // 
             // btnSQMCal
             // 
-            btnSQMCal.Location = new Point(87, 82);
+            btnSQMCal.Location = new Point(249, 30);
             btnSQMCal.Name = "btnSQMCal";
-            btnSQMCal.Size = new Size(75, 23);
+            btnSQMCal.Size = new Size(61, 23);
             btnSQMCal.TabIndex = 4;
             btnSQMCal.Text = "Write";
             btnSQMCal.UseVisualStyleBackColor = true;
@@ -292,9 +349,9 @@ namespace sqm_config
             // 
             // btnReadConfig
             // 
-            btnReadConfig.Location = new Point(6, 82);
+            btnReadConfig.Location = new Point(13, 133);
             btnReadConfig.Name = "btnReadConfig";
-            btnReadConfig.Size = new Size(75, 23);
+            btnReadConfig.Size = new Size(72, 23);
             btnReadConfig.TabIndex = 3;
             btnReadConfig.Text = "Read";
             btnReadConfig.UseVisualStyleBackColor = true;
@@ -302,12 +359,11 @@ namespace sqm_config
             // 
             // txtLog
             // 
-            txtLog.Enabled = false;
-            txtLog.Location = new Point(29, 404);
+            txtLog.Location = new Point(29, 493);
             txtLog.Multiline = true;
             txtLog.Name = "txtLog";
             txtLog.ScrollBars = ScrollBars.Vertical;
-            txtLog.Size = new Size(493, 98);
+            txtLog.Size = new Size(493, 154);
             txtLog.TabIndex = 6;
             // 
             // button2
@@ -345,7 +401,7 @@ namespace sqm_config
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(551, 514);
+            ClientSize = new Size(551, 659);
             Controls.Add(button3);
             Controls.Add(chkRefresh);
             Controls.Add(button2);
@@ -410,5 +466,10 @@ namespace sqm_config
         private Label lblAdvancedLabel;
         private Label lblAdvanced;
         private Button button3;
+        private Label label8;
+        private TextBox txtTempOffset;
+        private Button btnTempOffsetWrite;
+        private CheckBox chkTempOffset;
+        private Label label9;
     }
 }

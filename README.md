@@ -1,11 +1,27 @@
 # SQMeter
 
-Arduino-compatible Sky Quality Meter using the TSL2591
+Arduino-compatible Sky Quality Meter using the TSL2591 and BME280 sensor
 
-* SQM-LU serial protocol
-* Ability to store calibration factors in EEPROM
-* Windows program for monitoring and configuration
-* Compatible with ASCOM driver for Weather Conditions
+* Ability to store calibration factors for SQM and Temperature in EEPROM
+* Temperature compensation for the TSL2591
+
+* Windows standalone program for monitoring and configuration
+
+* SQM-LU serial protocol, compatible to standard ASCOM driver for Sky Quality Meter and Temperature
+
+* Extended protocal with additional data
+* ASCOM Platform 7 driver for Weather Conditions
+
+- Sky Quality 
+- Sky Brightness
+- Temperature
+- Humidity
+- Pressure
+- Dew Point (calculated)
+
+- Option to configure rolling average of the measurements for a given time period
+
+- ASCOM Conform Test passed
 
 
 ## References
@@ -15,7 +31,7 @@ https://github.com/gshau/SQM_TSL2591/
 
 ## Links
 
-[ASCOM driver](https://www.dizzy.eu/downloads.html)
+[ASCOM driver for SQM-LU](https://www.dizzy.eu/downloads.html)
 
 
 ## Building
@@ -24,9 +40,10 @@ Necessary components
 
 * Arduino Nano
 * TSL2591 light sensor
-* 16mm M12 lens
+* BME280 temperature sensor
+* 3.5mm M12 lens
 * M12 lens holder
-* some case
+* 3D printed case
 
 ## Features
 
@@ -44,7 +61,7 @@ Necessary components
 
 #### Read Config Data  
 * **Request:** `gx`
-* **Response:** `g, 000.00m, 000.0C,TC:Y,A5,11,DC:0`
+* **Response:** `g, 000.00m, 000.0C,TC:Y`
  
 #### Write SQM Offset to EEPROM (value range: -25m to 25m)
 * **Negative value:**  
@@ -57,3 +74,30 @@ Necessary components
 #### Erase EEPROM and set to default value
 * **Request:** `zcalDx`
 * **Response:** `zxdL`
+
+### Write Temperature offset to EEPROM value range (-50°C ... 50°C)
+Negative value: 
+* Request:  zcal2-1.5x
+* Response: z,2,-01.5C 
+
+Positive value:  
+* Request:  zcal2 00.5x
+* Response: z,2, 00.5C 
+
+### Enabel SQM  temperature calibration 
+
+* Request: zcalex
+* Response: zxeaL 
+
+#### Disable SQM  temperature calibration   (note lower case "d")
+
+* Request:  zcaldx
+* Response: zxdaL 
+
+### Enable verbose mode
+
+* Request: vx
+
+#### Disable verbose mode
+
+* Request: yx

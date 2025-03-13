@@ -1,0 +1,220 @@
+{
+  "ErrorCount": 0,
+  "IssueCount": 15,
+  "ConfigurationAlertCount": 0,
+  "TimingIssuesCount": 0,
+  "Errors": [],
+  "Issues": [
+    {
+      "Key": "AveragePeriod Write",
+      "Value": "No error generated on setting the average period \u003C -1.0"
+    },
+    {
+      "Key": "Pressure",
+      "Value": "Invalid value (above maximum expected - 1100): 1414,44"
+    },
+    {
+      "Key": "Consistency - CloudCover",
+      "Value": "Sensor CloudCover value is implemented: False, Sensor description is implemented: False, Sensor time since last update is implemented: True"
+    },
+    {
+      "Key": "Consistency - DewPoint",
+      "Value": "Sensor DewPoint value is implemented: True, Sensor description is implemented: False, Sensor time since last update is implemented: True"
+    },
+    {
+      "Key": "Consistency - Humidity",
+      "Value": "Sensor Humidity value is implemented: True, Sensor description is implemented: False, Sensor time since last update is implemented: True"
+    },
+    {
+      "Key": "Consistency - Pressure",
+      "Value": "Sensor Pressure value is implemented: True, Sensor description is implemented: False, Sensor time since last update is implemented: True"
+    },
+    {
+      "Key": "Consistency - RainRate",
+      "Value": "Sensor RainRate value is implemented: False, Sensor description is implemented: False, Sensor time since last update is implemented: True"
+    },
+    {
+      "Key": "Consistency - SkyBrightness",
+      "Value": "Sensor SkyBrightness value is implemented: True, Sensor description is implemented: False, Sensor time since last update is implemented: True"
+    },
+    {
+      "Key": "Consistency - SkyQuality",
+      "Value": "Sensor SkyQuality value is implemented: True, Sensor description is implemented: False, Sensor time since last update is implemented: True"
+    },
+    {
+      "Key": "Consistency - SkyTemperature",
+      "Value": "Sensor SkyTemperature value is implemented: False, Sensor description is implemented: False, Sensor time since last update is implemented: True"
+    },
+    {
+      "Key": "Consistency - StarFWHM",
+      "Value": "Sensor StarFWHM value is implemented: False, Sensor description is implemented: False, Sensor time since last update is implemented: True"
+    },
+    {
+      "Key": "Consistency - Temperature",
+      "Value": "Sensor Temperature value is implemented: True, Sensor description is implemented: False, Sensor time since last update is implemented: True"
+    },
+    {
+      "Key": "Consistency - WindDirection",
+      "Value": "Sensor WindDirection value is implemented: False, Sensor description is implemented: False, Sensor time since last update is implemented: True"
+    },
+    {
+      "Key": "Consistency - WindGust",
+      "Value": "Sensor WindGust value is implemented: False, Sensor description is implemented: False, Sensor time since last update is implemented: True"
+    },
+    {
+      "Key": "Consistency - WindSpeed",
+      "Value": "Sensor WindSpeed value is implemented: False, Sensor description is implemented: False, Sensor time since last update is implemented: True"
+    }
+  ],
+  "ConfigurationAlerts": [],
+  "Timings": [
+    {
+      "Key": "Timing Summary",
+      "Value": "See Help for further information."
+    },
+    {
+      "Key": "Timing Summary",
+      "Value": "FAST target response time: 0,1 seconds, (configuration and state reporting members)."
+    },
+    {
+      "Key": "Timing Summary",
+      "Value": "STANDARD target response time: 1,0 second, (property write and asynchronous initiators)."
+    },
+    {
+      "Key": "Timing Summary",
+      "Value": "EXTENDED target response time: 600,0 seconds, (synchronous methods, ImageArray and ImageArrayVariant)."
+    },
+    {
+      "Key": "Timing Summary",
+      "Value": "The log shows good and bad timings."
+    },
+    {
+      "Key": "",
+      "Value": ""
+    },
+    {
+      "Key": "Connect",
+      "Value": "At 20:58:43.045 Connect                           0,001 seconds. \u2713 (STANDARD)"
+    },
+    {
+      "Key": "InterfaceVersion",
+      "Value": "At 20:58:44.062 InterfaceVersion                  0,000 seconds. \u2713 (FAST)"
+    },
+    {
+      "Key": "Connected",
+      "Value": "At 20:58:44.062 Connected                         0,000 seconds. \u2713 (FAST)"
+    },
+    {
+      "Key": "Description",
+      "Value": "At 20:58:44.064 Description                       0,001 seconds. \u2713 (FAST)"
+    },
+    {
+      "Key": "DriverInfo",
+      "Value": "At 20:58:44.065 DriverInfo                        0,001 seconds. \u2713 (FAST)"
+    },
+    {
+      "Key": "DriverVersion",
+      "Value": "At 20:58:44.066 DriverVersion                     0,001 seconds. \u2713 (FAST)"
+    },
+    {
+      "Key": "Name",
+      "Value": "At 20:58:44.067 Name                              0,001 seconds. \u2713 (FAST)"
+    },
+    {
+      "Key": "SupportedActions",
+      "Value": "At 20:58:44.078 SupportedActions                  0,011 seconds. \u2713 (FAST)"
+    },
+    {
+      "Key": "DeviceState",
+      "Value": "At 20:58:44.108 DeviceState                       0,029 seconds. \u2713 (FAST)"
+    },
+    {
+      "Key": "AveragePeriod",
+      "Value": "At 20:58:44.112 AveragePeriod                     0,002 seconds. \u2713 (FAST)"
+    },
+    {
+      "Key": "DewPoint",
+      "Value": "At 20:58:44.120 DewPoint                          0,001 seconds. \u2713 (FAST)"
+    },
+    {
+      "Key": "Humidity",
+      "Value": "At 20:58:44.121 Humidity                          0,001 seconds. \u2713 (FAST)"
+    },
+    {
+      "Key": "Pressure",
+      "Value": "At 20:58:44.122 Pressure                          0,001 seconds. \u2713 (FAST)"
+    },
+    {
+      "Key": "SkyBrightness",
+      "Value": "At 20:58:44.124 SkyBrightness                     0,001 seconds. \u2713 (FAST)"
+    },
+    {
+      "Key": "SkyQuality",
+      "Value": "At 20:58:44.125 SkyQuality                        0,001 seconds. \u2713 (FAST)"
+    },
+    {
+      "Key": "Temperature",
+      "Value": "At 20:58:44.128 Temperature                       0,001 seconds. \u2713 (FAST)"
+    },
+    {
+      "Key": "TimeSinceLastUpdateLatest",
+      "Value": "At 20:58:44.133 TimeSinceLastUpdateLatest         0,001 seconds. \u2713 (FAST)"
+    },
+    {
+      "Key": "TimeSinceLastUpdateCloudCover",
+      "Value": "At 20:58:44.133 TimeSinceLastUpdateCloudCover     0,000 seconds. \u2713 (FAST)"
+    },
+    {
+      "Key": "TimeSinceLastUpdateDewPoint",
+      "Value": "At 20:58:44.134 TimeSinceLastUpdateDewPoint       0,000 seconds. \u2713 (FAST)"
+    },
+    {
+      "Key": "TimeSinceLastUpdateHumidity",
+      "Value": "At 20:58:44.134 TimeSinceLastUpdateHumidity       0,000 seconds. \u2713 (FAST)"
+    },
+    {
+      "Key": "TimeSinceLastUpdatePressure",
+      "Value": "At 20:58:44.134 TimeSinceLastUpdatePressure       0,000 seconds. \u2713 (FAST)"
+    },
+    {
+      "Key": "TimeSinceLastUpdateRainRate",
+      "Value": "At 20:58:44.135 TimeSinceLastUpdateRainRate       0,000 seconds. \u2713 (FAST)"
+    },
+    {
+      "Key": "TimeSinceLastUpdateSkyBrightness",
+      "Value": "At 20:58:44.135 TimeSinceLastUpdateSkyBrightness  0,000 seconds. \u2713 (FAST)"
+    },
+    {
+      "Key": "TimeSinceLastUpdateSkyQuality",
+      "Value": "At 20:58:44.135 TimeSinceLastUpdateSkyQuality     0,000 seconds. \u2713 (FAST)"
+    },
+    {
+      "Key": "TimeSinceLastUpdateStarFwhm",
+      "Value": "At 20:58:44.135 TimeSinceLastUpdateStarFwhm       0,000 seconds. \u2713 (FAST)"
+    },
+    {
+      "Key": "TimeSinceLastUpdateSkyTemperature",
+      "Value": "At 20:58:44.136 TimeSinceLastUpdateSkyTemperature 0,000 seconds. \u2713 (FAST)"
+    },
+    {
+      "Key": "TimeSinceLastUpdateTemperature",
+      "Value": "At 20:58:44.136 TimeSinceLastUpdateTemperature    0,000 seconds. \u2713 (FAST)"
+    },
+    {
+      "Key": "TimeSinceLastUpdateWindDirection",
+      "Value": "At 20:58:44.136 TimeSinceLastUpdateWindDirection  0,000 seconds. \u2713 (FAST)"
+    },
+    {
+      "Key": "TimeSinceLastUpdateWindGust",
+      "Value": "At 20:58:44.136 TimeSinceLastUpdateWindGust       0,000 seconds. \u2713 (FAST)"
+    },
+    {
+      "Key": "TimeSinceLastUpdateWindSpeed",
+      "Value": "At 20:58:44.136 TimeSinceLastUpdateWindSpeed      0,000 seconds. \u2713 (FAST)"
+    },
+    {
+      "Key": "Disconnect",
+      "Value": "At 20:58:44.899 Disconnect                        0,001 seconds. \u2713 (STANDARD)"
+    }
+  ]
+}

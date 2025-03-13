@@ -10,6 +10,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="LiveCharts" Version="0.9.7" />
     <PackageReference Include="System.IO.Ports" Version="10.0.0-preview.1.25080.5" />
   </ItemGroup>
 

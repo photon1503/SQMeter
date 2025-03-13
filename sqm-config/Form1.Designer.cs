@@ -84,6 +84,8 @@ namespace sqm_config
             chkRefresh = new CheckBox();
             button3 = new Button();
             checkBox1 = new CheckBox();
+            backgroundWorker1 = new System.ComponentModel.BackgroundWorker();
+            backgroundWorker2 = new System.ComponentModel.BackgroundWorker();
             Version.SuspendLayout();
             groupBox1.SuspendLayout();
             groupBox2.SuspendLayout();
@@ -723,5 +725,7 @@ namespace sqm_config
         private Label label16;
         private Label label15;
         private CheckBox checkBox1;
+        private System.ComponentModel.BackgroundWorker backgroundWorker1;
+        private System.ComponentModel.BackgroundWorker backgroundWorker2;
     }
 }

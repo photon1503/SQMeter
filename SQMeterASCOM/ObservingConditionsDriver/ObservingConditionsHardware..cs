@@ -451,7 +451,7 @@ namespace ASCOM.SQMeter.ObservingConditions
                     LogMessage("DisconnectTask", $"Connecting set false");
                 }
             });
-            connectedState = false;
+
             LogMessage("Disconnect", $"Disconnect task started OK");
         }
 
@@ -493,7 +493,6 @@ namespace ASCOM.SQMeter.ObservingConditions
                         SharedResources.SharedSerial.Connected = true;
                         Refresh();
 
-                        connectedState = true;
                         //start timer
                         _timer = new System.Timers.Timer(5000);
                         _timer.Elapsed += (s, e) =>
@@ -507,6 +506,7 @@ namespace ASCOM.SQMeter.ObservingConditions
                         // Since the hardware is already connected no action is required
                         LogMessage("SetConnected", $"Hardware already connected.");
                     }
+                    connectedState = true;
 
                     // The hardware either "already was" or "is now" connected, so add the driver unique ID to the connected list
                     uniqueIds.Add(uniqueId);
@@ -526,6 +526,7 @@ namespace ASCOM.SQMeter.ObservingConditions
                     // Remove the driver unique ID to the connected list
                     uniqueIds.Remove(uniqueId);
                     LogMessage("SetConnected", $"Unique id {uniqueId} removed from the connection list.");
+                    connectedState = false;
 
                     // Check whether there are now any connected driver instances
                     if (uniqueIds.Count == 0) // There are no connected driver instances so disconnect from the hardware
@@ -535,7 +536,6 @@ namespace ASCOM.SQMeter.ObservingConditions
                         //
                         _timer.Stop();
                         SharedResources.SharedSerial.Connected = false;
-                        connectedState = false;
                     }
                     else // Other device instances are connected so do not disconnect the hardware
                     {

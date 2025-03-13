@@ -379,8 +379,8 @@ namespace ASCOM.SQMeter.ObservingConditions
                 try
                 {
                     // Returns the driver's connection state rather than the local server's connected state, which could be different because there may be other client connections still active.
-                    LogMessage("Connected Get", connectedState.ToString());
-                    return connectedState;
+                    LogMessage("Connected Get", ObservingConditionsHardware.connectedState.ToString());
+                    return ObservingConditionsHardware.connectedState;
 
                     //LogMessage("Connected Get", SharedResources.SharedSerial.Connected.ToString());
                     //return SharedResources.SharedSerial.Connected;
@@ -406,16 +406,14 @@ namespace ASCOM.SQMeter.ObservingConditions
                         LogMessage("Connected Set", "Connecting to device...");
                         ObservingConditionsHardware.SetConnected(uniqueId, true);
                         LogMessage("Connected Set", "Connected OK");
-                        connectedState = true;
                     }
                     else
                     {
-                        connectedState = false;
-
                         LogMessage("Connected Set", "Disconnecting from device...");
                         ObservingConditionsHardware.SetConnected(uniqueId, false);
                         LogMessage("Connected Set", "Disconnected OK");
                     }
+                    connectedState = ObservingConditionsHardware.connectedState;
                 }
                 catch (Exception ex)
                 {

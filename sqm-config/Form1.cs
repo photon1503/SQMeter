@@ -7,6 +7,7 @@ using ScottPlot.WinForms;
 using ScottPlot.Plottables;
 using ScottPlot.Colormaps;
 using ScottPlot;
+using static ScottPlot.Generate;
 
 namespace sqm_config
 {
@@ -17,8 +18,7 @@ namespace sqm_config
         private System.Windows.Forms.Timer timer;
         private bool isConnected = false;
 
-        private DataStreamer streamer;
-     
+        private DataLogger streamer;
 
         public Form1()
         {
@@ -33,20 +33,34 @@ namespace sqm_config
             {
                 cmbCOMports.SelectedItem = savedPort;
             }
+
+            chkAutoRefreshStartup.Checked = Properties.Settings.Default.AutoRefresh;
+            chkConnectStartup.Checked = Properties.Settings.Default.AutoConnect;
+
+            if (Properties.Settings.Default.AutoConnect)
+            {
+                connect();
+            }
+
+            //delay 5 sec
+            System.Threading.Thread.Sleep(5000);
+            if (Properties.Settings.Default.AutoRefresh)
+            {
+                chkRefresh.Checked = true;
+            }
         }
 
         private void InitializeChart()
         {
-            streamer = formsPlot2.Plot.Add.DataStreamer(720);
+            streamer = formsPlot2.Plot.Add.DataLogger();
 
-            streamer.ViewWipeRight();
+            formsPlot2.Plot.Axes.Bottom.TickGenerator = new ScottPlot.TickGenerators.DateTimeAutomatic();
+            formsPlot2.Plot.Axes.DateTimeTicksBottom();
 
             formsPlot2.Refresh();
-
-    
         }
 
-        private async void button1_Click(object sender, EventArgs e)
+        private async void connect()
         {
             if (isConnected)
             {
@@ -104,6 +118,11 @@ namespace sqm_config
                 //get config
                 ReadConfig();
             }
+        }
+
+        private async void button1_Click(object sender, EventArgs e)
+        {
+            connect();
         }
 
         private void Buttons(bool val)
@@ -169,7 +188,7 @@ namespace sqm_config
 
                 lblDMPSAS.Text = GetSplitValue(response, "dmpsas");
 
-                lblExp.Text = GetSplitValue(response, "integration" + " ms");
+                lblExp.Text = GetSplitValue(response, "integration") + " ms";
 
                 lblGain.Text = GetSplitValue(response, "gain") + " x";
 
@@ -185,9 +204,13 @@ namespace sqm_config
 
                 lblMag.Text = GetSplitValue(response, "mag");
 
-                double magValues = double.Parse(lblMag.Text, CultureInfo.InvariantCulture);
-                streamer.Add(magValues);
+                System.DateTime currentTime = System.DateTime.Now;
 
+                double magValues = double.Parse(lblMag.Text, CultureInfo.InvariantCulture);
+                streamer.Add(new Coordinates(currentTime.ToOADate(), magValues));
+
+                if (streamer.Data.Coordinates.Count() > 18000)
+                    streamer.Data.Coordinates.RemoveAt(0);
                 formsPlot2.Refresh();
             }
         }
@@ -213,7 +236,9 @@ namespace sqm_config
                 Invoke(new Action(() => UpdateUI(data)));
                 return;
             }
-            txtLog.AppendText($"Received: {data}\r\n");
+            // add local time to log
+            string time = System.DateTime.Now.ToString("HH:mm:ss");
+            txtLog.AppendText($"{time} Received: {data}\r\n");
         }
 
         private async void ReadConfig()
@@ -383,6 +408,18 @@ namespace sqm_config
         private async void button5_Click_1(object sender, EventArgs e)
         {
             string response = await _sqmSerial.SendCommandAsync("qx");
+        }
+
+        private void chkConnectStartup_CheckedChanged(object sender, EventArgs e)
+        {
+            Properties.Settings.Default.AutoConnect = chkConnectStartup.Checked;
+            Properties.Settings.Default.Save();
+        }
+
+        private void chkAutoRefreshStartup_CheckedChanged(object sender, EventArgs e)
+        {
+            Properties.Settings.Default.AutoRefresh = chkAutoRefreshStartup.Checked;
+            Properties.Settings.Default.Save();
         }
     }
 }

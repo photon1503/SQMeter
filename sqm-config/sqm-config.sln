@@ -10,6 +10,7 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{4F35750D-993D-48D6-9A39-972C99C7A16E}"
 	ProjectSection(SolutionItems) = preProject
 		..\README.md = ..\README.md
+		..\sky_quality_meter.ico = ..\sky_quality_meter.ico
 	EndProjectSection
 EndProject
 Global

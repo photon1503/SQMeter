@@ -30,6 +30,7 @@ namespace sqm_config
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
             cmbCOMports = new ComboBox();
             lblPort = new Label();
             button1 = new Button();
@@ -96,18 +97,22 @@ namespace sqm_config
             tabControl1 = new TabControl();
             tabPage1 = new TabPage();
             tabPage2 = new TabPage();
+            tabPage3 = new TabPage();
+            chkAutoRefreshStartup = new CheckBox();
+            chkConnectStartup = new CheckBox();
             Version.SuspendLayout();
             groupBox1.SuspendLayout();
             groupBox2.SuspendLayout();
             tabControl1.SuspendLayout();
             tabPage1.SuspendLayout();
             tabPage2.SuspendLayout();
+            tabPage3.SuspendLayout();
             SuspendLayout();
             // 
             // cmbCOMports
             // 
             cmbCOMports.FormattingEnabled = true;
-            cmbCOMports.Location = new Point(63, 13);
+            cmbCOMports.Location = new Point(46, 6);
             cmbCOMports.Name = "cmbCOMports";
             cmbCOMports.Size = new Size(121, 23);
             cmbCOMports.TabIndex = 0;
@@ -115,7 +120,7 @@ namespace sqm_config
             // lblPort
             // 
             lblPort.AutoSize = true;
-            lblPort.Location = new Point(28, 16);
+            lblPort.Location = new Point(11, 9);
             lblPort.Name = "lblPort";
             lblPort.Size = new Size(29, 15);
             lblPort.TabIndex = 1;
@@ -123,7 +128,7 @@ namespace sqm_config
             // 
             // button1
             // 
-            button1.Location = new Point(190, 12);
+            button1.Location = new Point(173, 5);
             button1.Name = "button1";
             button1.Size = new Size(75, 23);
             button1.TabIndex = 2;
@@ -509,7 +514,7 @@ namespace sqm_config
             // label11
             // 
             label11.AutoSize = true;
-            label11.Location = new Point(15, 116);
+            label11.Location = new Point(15, 110);
             label11.Name = "label11";
             label11.Size = new Size(78, 15);
             label11.TabIndex = 17;
@@ -517,14 +522,14 @@ namespace sqm_config
             // 
             // txtDF
             // 
-            txtDF.Location = new Point(95, 113);
+            txtDF.Location = new Point(95, 107);
             txtDF.Name = "txtDF";
             txtDF.Size = new Size(69, 23);
             txtDF.TabIndex = 16;
             // 
             // button4
             // 
-            button4.Location = new Point(251, 112);
+            button4.Location = new Point(251, 106);
             button4.Name = "button4";
             button4.Size = new Size(61, 23);
             button4.TabIndex = 15;
@@ -535,7 +540,7 @@ namespace sqm_config
             // chkTempOffset
             // 
             chkTempOffset.AutoSize = true;
-            chkTempOffset.Location = new Point(15, 167);
+            chkTempOffset.Location = new Point(15, 136);
             chkTempOffset.Name = "chkTempOffset";
             chkTempOffset.Size = new Size(237, 19);
             chkTempOffset.TabIndex = 14;
@@ -641,12 +646,12 @@ namespace sqm_config
             txtLog.Multiline = true;
             txtLog.Name = "txtLog";
             txtLog.ScrollBars = ScrollBars.Vertical;
-            txtLog.Size = new Size(493, 95);
+            txtLog.Size = new Size(493, 208);
             txtLog.TabIndex = 6;
             // 
             // button2
             // 
-            button2.Location = new Point(28, 48);
+            button2.Location = new Point(10, 441);
             button2.Name = "button2";
             button2.Size = new Size(75, 23);
             button2.TabIndex = 7;
@@ -657,7 +662,7 @@ namespace sqm_config
             // chkRefresh
             // 
             chkRefresh.AutoSize = true;
-            chkRefresh.Location = new Point(109, 51);
+            chkRefresh.Location = new Point(91, 444);
             chkRefresh.Name = "chkRefresh";
             chkRefresh.Size = new Size(116, 19);
             chkRefresh.TabIndex = 8;
@@ -667,7 +672,7 @@ namespace sqm_config
             // 
             // button3
             // 
-            button3.Location = new Point(333, 343);
+            button3.Location = new Point(331, 456);
             button3.Name = "button3";
             button3.Size = new Size(164, 23);
             button3.TabIndex = 9;
@@ -678,7 +683,7 @@ namespace sqm_config
             // checkBox1
             // 
             checkBox1.AutoSize = true;
-            checkBox1.Location = new Point(14, 343);
+            checkBox1.Location = new Point(8, 460);
             checkBox1.Name = "checkBox1";
             checkBox1.Size = new Size(188, 19);
             checkBox1.TabIndex = 10;
@@ -696,7 +701,7 @@ namespace sqm_config
             // formsPlot2
             // 
             formsPlot2.DisplayScale = 1F;
-            formsPlot2.Location = new Point(6, 216);
+            formsPlot2.Location = new Point(7, 216);
             formsPlot2.Name = "formsPlot2";
             formsPlot2.Size = new Size(493, 219);
             formsPlot2.TabIndex = 13;
@@ -705,20 +710,23 @@ namespace sqm_config
             // 
             tabControl1.Controls.Add(tabPage1);
             tabControl1.Controls.Add(tabPage2);
-            tabControl1.Location = new Point(1, 77);
+            tabControl1.Controls.Add(tabPage3);
+            tabControl1.Location = new Point(12, 12);
             tabControl1.Name = "tabControl1";
             tabControl1.SelectedIndex = 0;
-            tabControl1.Size = new Size(519, 477);
+            tabControl1.Size = new Size(515, 513);
             tabControl1.TabIndex = 14;
             // 
             // tabPage1
             // 
             tabPage1.Controls.Add(groupBox1);
             tabPage1.Controls.Add(formsPlot2);
+            tabPage1.Controls.Add(chkRefresh);
+            tabPage1.Controls.Add(button2);
             tabPage1.Location = new Point(4, 24);
             tabPage1.Name = "tabPage1";
             tabPage1.Padding = new Padding(3);
-            tabPage1.Size = new Size(511, 449);
+            tabPage1.Size = new Size(507, 485);
             tabPage1.TabIndex = 0;
             tabPage1.Text = "Measurements";
             tabPage1.UseVisualStyleBackColor = true;
@@ -733,23 +741,56 @@ namespace sqm_config
             tabPage2.Location = new Point(4, 24);
             tabPage2.Name = "tabPage2";
             tabPage2.Padding = new Padding(3);
-            tabPage2.Size = new Size(539, 471);
+            tabPage2.Size = new Size(507, 485);
             tabPage2.TabIndex = 1;
-            tabPage2.Text = "Configuration";
+            tabPage2.Text = "Hardware";
             tabPage2.UseVisualStyleBackColor = true;
+            // 
+            // tabPage3
+            // 
+            tabPage3.Controls.Add(chkAutoRefreshStartup);
+            tabPage3.Controls.Add(chkConnectStartup);
+            tabPage3.Controls.Add(cmbCOMports);
+            tabPage3.Controls.Add(lblPort);
+            tabPage3.Controls.Add(button1);
+            tabPage3.Location = new Point(4, 24);
+            tabPage3.Name = "tabPage3";
+            tabPage3.Padding = new Padding(3);
+            tabPage3.Size = new Size(507, 485);
+            tabPage3.TabIndex = 2;
+            tabPage3.Text = "Setup";
+            tabPage3.UseVisualStyleBackColor = true;
+            // 
+            // chkAutoRefreshStartup
+            // 
+            chkAutoRefreshStartup.AutoSize = true;
+            chkAutoRefreshStartup.Location = new Point(11, 60);
+            chkAutoRefreshStartup.Name = "chkAutoRefreshStartup";
+            chkAutoRefreshStartup.Size = new Size(148, 19);
+            chkAutoRefreshStartup.TabIndex = 4;
+            chkAutoRefreshStartup.Text = "Auto refresh on startup";
+            chkAutoRefreshStartup.UseVisualStyleBackColor = true;
+            chkAutoRefreshStartup.CheckedChanged += chkAutoRefreshStartup_CheckedChanged;
+            // 
+            // chkConnectStartup
+            // 
+            chkConnectStartup.AutoSize = true;
+            chkConnectStartup.Location = new Point(11, 35);
+            chkConnectStartup.Name = "chkConnectStartup";
+            chkConnectStartup.Size = new Size(128, 19);
+            chkConnectStartup.TabIndex = 3;
+            chkConnectStartup.Text = "Connect on startup";
+            chkConnectStartup.UseVisualStyleBackColor = true;
+            chkConnectStartup.CheckedChanged += chkConnectStartup_CheckedChanged;
             // 
             // Form1
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(523, 571);
+            ClientSize = new Size(536, 540);
             Controls.Add(tabControl1);
             Controls.Add(flowLayoutPanel1);
-            Controls.Add(chkRefresh);
-            Controls.Add(button2);
-            Controls.Add(button1);
-            Controls.Add(lblPort);
-            Controls.Add(cmbCOMports);
+            Icon = (Icon)resources.GetObject("$this.Icon");
             Name = "Form1";
             Text = "SQMeter";
             Load += Form1_Load;
@@ -761,10 +802,12 @@ namespace sqm_config
             groupBox2.PerformLayout();
             tabControl1.ResumeLayout(false);
             tabPage1.ResumeLayout(false);
+            tabPage1.PerformLayout();
             tabPage2.ResumeLayout(false);
             tabPage2.PerformLayout();
+            tabPage3.ResumeLayout(false);
+            tabPage3.PerformLayout();
             ResumeLayout(false);
-            PerformLayout();
         }
 
         #endregion
@@ -843,5 +886,8 @@ namespace sqm_config
         private TabControl tabControl1;
         private TabPage tabPage1;
         private TabPage tabPage2;
+        private TabPage tabPage3;
+        private CheckBox chkAutoRefreshStartup;
+        private CheckBox chkConnectStartup;
     }
 }

@@ -7,7 +7,12 @@
     <Nullable>enable</Nullable>
     <UseWindowsForms>true</UseWindowsForms>
     <ImplicitUsings>enable</ImplicitUsings>
+    <ApplicationIcon>sky_quality_meter.ico</ApplicationIcon>
   </PropertyGroup>
+
+  <ItemGroup>
+    <Content Include="sky_quality_meter.ico" />
+  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="ScottPlot.WinForms" Version="5.0.54" />

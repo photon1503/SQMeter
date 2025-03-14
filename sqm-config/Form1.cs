@@ -3,6 +3,10 @@ using System.Globalization;
 using System.IO.Ports;
 using System.Text;
 using sqm_config.Properties;
+using ScottPlot.WinForms;
+using ScottPlot.Plottables;
+using ScottPlot.Colormaps;
+using ScottPlot;
 
 namespace sqm_config
 {
@@ -13,9 +17,12 @@ namespace sqm_config
         private System.Windows.Forms.Timer timer;
         private bool isConnected = false;
 
+        private DataStreamer streamer;
+
         public Form1()
         {
             InitializeComponent();
+            InitializeChart();
             Buttons(false);
 
             cmbCOMports.Items.AddRange(System.IO.Ports.SerialPort.GetPortNames());
@@ -25,6 +32,21 @@ namespace sqm_config
             {
                 cmbCOMports.SelectedItem = savedPort;
             }
+        }
+
+        private void InitializeChart()
+        {
+            streamer = formsPlot2.Plot.Add.DataStreamer(100);
+
+            for (int x = 0; x < 25; x++)
+            {
+                double y = Generate.RandomWalker.Next();
+                streamer.Add(y);
+            }
+
+            streamer.ViewWipeRight();
+
+            formsPlot2.Refresh();
         }
 
         private async void button1_Click(object sender, EventArgs e)
@@ -165,6 +187,11 @@ namespace sqm_config
                 lblPress.Text = GetSplitValue(response, "pres");
 
                 lblMag.Text = GetSplitValue(response, "mag");
+
+                double magValues = double.Parse(lblMag.Text, CultureInfo.InvariantCulture);
+                streamer.Add(magValues);
+
+                formsPlot2.Refresh();
             }
         }
 

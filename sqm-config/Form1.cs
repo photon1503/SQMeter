@@ -207,8 +207,10 @@ namespace sqm_config
                 txtSQMcal.Text = split[1];
                 txtTempOffset.Text = split[2];
                 //remove trailing \r\n from split[3]
-                split[3] = split[3].Substring(0, split[3].Length - 2);
+
                 chkTempOffset.Checked = split[3] == "Y";
+                split[4] = split[4].Substring(0, split[4].Length - 2);
+                txtDF.Text = split[4];
             }
         }
 
@@ -329,7 +331,34 @@ namespace sqm_config
 
         private void label6_Click(object sender, EventArgs e)
         {
+        }
 
+        private async void button4_Click(object sender, EventArgs e)
+        {
+            // DF
+            if (!double.TryParse(txtDF.Text, NumberStyles.Float, CultureInfo.InvariantCulture, out double calValue))
+            {
+                MessageBox.Show("Invalid calibration value");
+                return;
+            }
+
+            if (calValue < 0 || calValue > 100000)
+            {
+                MessageBox.Show("DF value must be between 0 and 100000");
+                return;
+            }
+
+            // Format the command string based on the value of calValue
+            string command = calValue < 0
+                ? $"zcal3{calValue.ToString("0.00", CultureInfo.InvariantCulture)}x"
+                : $"zcal3{calValue.ToString("00.00", CultureInfo.InvariantCulture)}x";
+            txtLog.AppendText($"Sending: {command}\r\n");
+            string response = await _sqmSerial.SendCommandAsync(command);
+        }
+
+        private async void button5_Click_1(object sender, EventArgs e)
+        {
+            string response = await _sqmSerial.SendCommandAsync("qx");
         }
     }
 }

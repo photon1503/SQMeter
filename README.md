@@ -92,6 +92,11 @@ An **Arduino-compatible Sky Quality Meter** leveraging the **TSL2591** and **BME
   - **Request:** `zcal2 00.5x`
   - **Response:** `z,2, 00.5C`
 
+### Write Device Factor 
+- **Positive Value:**  
+  - **Request:** `zcal2 00.5x`
+  - **Response:** `z,2, 00.5C`
+
 ### Enable SQM Temperature Calibration
 - **Request:** `zcalex`
 - **Response:** `zxeaL`
@@ -101,6 +106,9 @@ An **Arduino-compatible Sky Quality Meter** leveraging the **TSL2591** and **BME
 - **Request:** `zcaldx`
 - **Response:** `zxdaL`
 
+### Reboot
+- **Request:** `qx`
+  
 ### Enable Verbose Mode
 - **Request:** `vx`
 

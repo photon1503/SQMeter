@@ -108,6 +108,8 @@ void setup()
   TempCalOffset = ReadEETempCalOffset(); // Temperature Calibration offset from EEPROM
 
   sqm.setCalibrationOffset(SqmCalOffset); // call offset
+  float DF = ReadEEDFCal();
+  sqm.setDF(DF);               // DF
 
 } // end of Setup
 
@@ -134,6 +136,11 @@ void processCommand(const char *command)
     Serial.println(SERIAL_NUMBER);
 
     // Reading request
+  }
+  else if (strcmp(command, "q") == 0)
+  {
+    //reboot
+    asm volatile("  jmp 0");
   }
   else if (strcmp(command, "v") == 0)
   {
@@ -194,8 +201,8 @@ void processCommand(const char *command)
     temp_string = _sign + temp_string;
     oled[4] = '0';
     String autocal = ReadEEAutoTempCal() ? "Y" : "N";
-    Serial.println("g," + sqm_string + "m," + temp_string + "C," + autocal );
-  }
+    Serial.println("g," + sqm_string + "m," + temp_string + "C," + autocal + "," +  sqm.getDF() );
+   }
   // advanced response
 
   else if (command[0] == 'a')
@@ -270,6 +277,17 @@ void processCommand(const char *command)
         Serial.print((TempCalOffset < 0) ? '-' : ' ');
         Serial.println(responseBuffer);
       }
+      else if (_x == '3')  //DF
+      {
+        char responseBuffer[16];
+        strncpy(responseBuffer, command + 5, sizeof(responseBuffer) - 1);
+        responseBuffer[sizeof(responseBuffer) - 1] = '\0';
+        float dfValue = atof(responseBuffer); // Convert to float
+        WriteEEDFCal(dfValue);
+        Serial.print("z,3,");
+        Serial.println(dfValue,6);
+      }
+      
 
       // Enable temperature callibration
       else if (_x == 'e')
@@ -292,7 +310,7 @@ void processCommand(const char *command)
         TempCalOffset = TEMP_CAL_OFFSET; // set to default
         WriteEETempCalOffset(TempCalOffset);
         WriteEESqmCalOffset(SqmCalOffset);
-        WriteEEScontras(DEFALUT_CONTRAS);
+       
         Serial.println("zxdL");
       }
     }

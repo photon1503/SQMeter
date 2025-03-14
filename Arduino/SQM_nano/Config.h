@@ -16,7 +16,6 @@
  
 #define EXTENDET_PROTOCOL_OFF  // My Extender protocol for weather info (Disable when is project compilation Big)
 
-#define DEFALUT_CONTRAS 0     // default Display contras
 
 
 #define SQM_CAL_OFFSET  -1.0  // default SQM Calibration offset but priority is in EEPROM stored value

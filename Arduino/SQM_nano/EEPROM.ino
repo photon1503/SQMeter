@@ -10,9 +10,8 @@
 #define EEPROM_TEMP_CAL_INDEX_C      7
 #define EEPROM_TEMP_CAL_INDEX_F      8 
 #define EEPROM_AUTO_TEMP_INDEX_C     14
-#define EEPROM_AUTO_CONTRAS_INDEX_C  15
-#define EEPROM_CONTRAS_INDEX_C       17
-#define EEPROM_CONTRAS_INDEX_B       20
+
+#define EEPROM_DF                    23  
 
 
 // read SQMCalOffset from EEPROM
@@ -54,21 +53,9 @@ void WriteEETempCalOffset( float f) {
    EEPROM_writeFloat(EEPROM_TEMP_CAL_INDEX_F, f);
 }
 
-// Read AutoContras
-boolean ReadEEAutoContras() {
-  if ( EEPROM.read(EEPROM_AUTO_CONTRAS_INDEX_C) == 'N' )  
-     return false;
-  else 
-     return true;
-}
 
-// Write AutoContras
-void WriteEEAutoContras( boolean _b ) {
-  if ( _b )
-    EEPROM.write(EEPROM_AUTO_CONTRAS_INDEX_C,'Y');
-  else 
-    EEPROM.write(EEPROM_AUTO_CONTRAS_INDEX_C,'N');
-}
+
+
 
 // Read AutoTemperature Calibratiosn
 boolean ReadEEAutoTempCal() {
@@ -76,6 +63,17 @@ boolean ReadEEAutoTempCal() {
      return false;
   else 
      return true;
+}
+
+// Read AutoTemperature Calibratiosn
+float ReadEEDFCal() {
+  float _f;
+  _f = EEPROM_readFloat(EEPROM_DF);
+  return _f;
+}
+
+void WriteEEDFCal( float _f){
+   EEPROM_writeFloat(EEPROM_DF, _f);
 }
 
 // Write 
@@ -86,23 +84,9 @@ void WriteEEAutoTempCal( boolean _b ) {
     EEPROM.write(EEPROM_AUTO_TEMP_INDEX_C,'N');
 }
 
-// Read Display contras from EEPROM
-uint8_t ReadEEcontras(){
-   uint8_t _f;
-  if ( EEPROM.read(EEPROM_CONTRAS_INDEX_C) == 'C') {
-    _f = EEPROM.read(EEPROM_CONTRAS_INDEX_B);
-  }
-  else {
-   _f = DEFALUT_CONTRAS;  
-  } 
-  return _f;
-}
 
-// Write Display Contras to EEPROM
-void WriteEEScontras( uint8_t _f){
-   EEPROM.write(EEPROM_CONTRAS_INDEX_C,'C');
-   EEPROM.write(EEPROM_CONTRAS_INDEX_B, _f);
-}
+
+
 
 
 // write 4 byte variable into EEPROM at position i (4 bytes)

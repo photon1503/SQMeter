@@ -80,7 +80,7 @@
 #define TSL2591_CONTROL_RESET     (0x80)
 
 //#define TSL2591_LUX_DF            (408.0F)
-#define TSL2591_LUX_DF            (21000.0F) 
+
 #define TSL2591_LUX_COEFB         (1.64F)  // CH0 coefficient
 #define TSL2591_LUX_COEFC         (0.59F)  // CH1 coefficient A
 #define TSL2591_LUX_COEFD         (0.86F)  // CH2 coefficient B
@@ -148,6 +148,8 @@ class SQM_TSL2591 : public Adafruit_Sensor
   uint16_t  read16  ( uint8_t reg );
   uint8_t   read8   ( uint8_t reg );
 
+  void      setDF                     ( float df);
+  float     getDF                     ( );
   float     calculateLux              ( uint16_t ch0, uint16_t ch1 );
   float     calculateLux2              ( uint16_t ch0, uint16_t ch1 );
   void      setGain                   ( tsl2591Gain_t gain );
@@ -185,6 +187,7 @@ class SQM_TSL2591 : public Adafruit_Sensor
   int32_t _sensorID;
   float _calibrationOffset;
   temperatureCalibration _temperatureCalibration;
+  float  TSL2591_LUX_DF;
   float _temperature;
   bool _hasTemperature = false;
   void calibrateReadingsForTemperature(uint16_t &ir, uint16_t &full);

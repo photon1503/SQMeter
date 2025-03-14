@@ -63,6 +63,7 @@
 
 #define MAX_ITERATIONS 32 // Define the maximum number of iterations
 
+
 SQM_TSL2591::SQM_TSL2591(int32_t sensorID)
 {
   _initialized = false;
@@ -187,6 +188,16 @@ void SQM_TSL2591::setGain(tsl2591Gain_t gain)
 void SQM_TSL2591::setCalibrationOffset(float calibrationOffset)
 {
   _calibrationOffset = calibrationOffset;
+}
+
+void SQM_TSL2591::setDF(float df)
+{
+  TSL2591_LUX_DF = df;
+}
+
+float SQM_TSL2591::getDF()
+{
+  return TSL2591_LUX_DF;
 }
 
 tsl2591Gain_t SQM_TSL2591::getGain() { return _gain; }
@@ -625,23 +636,23 @@ float SQM_TSL2591::calculateLux2(uint16_t ch0, uint16_t ch1)
   float lux = 0.0;
   if (ratio <= 0.5)
   {
-    lux = (0.0304 * d0) - (0.062 * d0 * pow(ratio, 1.4));
+    lux = (0.0304F * d0) - (0.062F * d0 * pow(ratio, 1.4F));
   }
   else if (ratio <= 0.61)
   {
-    lux = (0.0224 * d0) - (0.031 * d1);
+    lux = (0.0224F * d0) - (0.031F * d1);
   }
   else if (ratio <= 0.80)
   {
-    lux = (0.0128 * d0) - (0.0153 * d1);
+    lux = (0.0128F * d0) - (0.0153F * d1);
   }
   else if (ratio <= 1.30)
   {
-    lux = (0.00146 * d0) - (0.00112 * d1);
+    lux = (0.00146F * d0) - (0.00112F * d1);
   }
   else
   {
-    lux = 0.0;
+    lux = 0.0F;
   }
   // Adjust lux based on the gain and integration time
   lux *= (gainValue * integrationFactor);
@@ -713,7 +724,7 @@ float SQM_TSL2591::calculateLux(uint16_t ch0, uint16_t ch1) /*wbp*/
   }
 
   // Calculate counts per lux (cpl)
-  cpl = (atime * again) / TSL2591_LUX_DF;
+  cpl = (atime * again) / (float)TSL2591_LUX_DF;
 
   // Calculate lux1 and lux2
   lux1 = ((float)ch0 - (TSL2591_LUX_COEFB * (float)ch1)) / cpl;

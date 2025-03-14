@@ -68,6 +68,10 @@ namespace sqm_config
             label6 = new Label();
             lblMag = new Label();
             groupBox2 = new GroupBox();
+            button5 = new Button();
+            label11 = new Label();
+            txtDF = new TextBox();
+            button4 = new Button();
             chkTempOffset = new CheckBox();
             label9 = new Label();
             label8 = new Label();
@@ -87,7 +91,6 @@ namespace sqm_config
             backgroundWorker1 = new System.ComponentModel.BackgroundWorker();
             backgroundWorker2 = new System.ComponentModel.BackgroundWorker();
             backgroundWorker3 = new System.ComponentModel.BackgroundWorker();
-            checkBox2 = new CheckBox();
             Version.SuspendLayout();
             groupBox1.SuspendLayout();
             groupBox2.SuspendLayout();
@@ -130,9 +133,9 @@ namespace sqm_config
             Version.Controls.Add(label3);
             Version.Controls.Add(label2);
             Version.Controls.Add(label1);
-            Version.Location = new Point(28, 282);
+            Version.Location = new Point(32, 282);
             Version.Name = "Version";
-            Version.Size = new Size(171, 162);
+            Version.Size = new Size(171, 221);
             Version.TabIndex = 3;
             Version.TabStop = false;
             Version.Text = "Version";
@@ -463,6 +466,10 @@ namespace sqm_config
             // 
             // groupBox2
             // 
+            groupBox2.Controls.Add(button5);
+            groupBox2.Controls.Add(label11);
+            groupBox2.Controls.Add(txtDF);
+            groupBox2.Controls.Add(button4);
             groupBox2.Controls.Add(chkTempOffset);
             groupBox2.Controls.Add(label9);
             groupBox2.Controls.Add(label8);
@@ -476,15 +483,51 @@ namespace sqm_config
             groupBox2.Controls.Add(btnReadConfig);
             groupBox2.Location = new Point(206, 282);
             groupBox2.Name = "groupBox2";
-            groupBox2.Size = new Size(316, 162);
+            groupBox2.Size = new Size(316, 221);
             groupBox2.TabIndex = 5;
             groupBox2.TabStop = false;
             groupBox2.Text = "Config";
             // 
+            // button5
+            // 
+            button5.Location = new Point(128, 192);
+            button5.Name = "button5";
+            button5.Size = new Size(75, 23);
+            button5.TabIndex = 18;
+            button5.Text = "Reboot";
+            button5.UseVisualStyleBackColor = true;
+            button5.Click += button5_Click_1;
+            // 
+            // label11
+            // 
+            label11.AutoSize = true;
+            label11.Location = new Point(15, 116);
+            label11.Name = "label11";
+            label11.Size = new Size(78, 15);
+            label11.TabIndex = 17;
+            label11.Text = "Device Factor";
+            // 
+            // txtDF
+            // 
+            txtDF.Location = new Point(95, 113);
+            txtDF.Name = "txtDF";
+            txtDF.Size = new Size(69, 23);
+            txtDF.TabIndex = 16;
+            // 
+            // button4
+            // 
+            button4.Location = new Point(251, 112);
+            button4.Name = "button4";
+            button4.Size = new Size(61, 23);
+            button4.TabIndex = 15;
+            button4.Text = "Write";
+            button4.UseVisualStyleBackColor = true;
+            button4.Click += button4_Click;
+            // 
             // chkTempOffset
             // 
             chkTempOffset.AutoSize = true;
-            chkTempOffset.Location = new Point(15, 107);
+            chkTempOffset.Location = new Point(15, 167);
             chkTempOffset.Name = "chkTempOffset";
             chkTempOffset.Size = new Size(237, 19);
             chkTempOffset.TabIndex = 14;
@@ -513,7 +556,7 @@ namespace sqm_config
             // 
             // txtTempOffset
             // 
-            txtTempOffset.Location = new Point(89, 61);
+            txtTempOffset.Location = new Point(95, 61);
             txtTempOffset.Name = "txtTempOffset";
             txtTempOffset.Size = new Size(69, 23);
             txtTempOffset.TabIndex = 11;
@@ -530,7 +573,7 @@ namespace sqm_config
             // 
             // btnReset
             // 
-            btnReset.Location = new Point(235, 132);
+            btnReset.Location = new Point(235, 192);
             btnReset.Name = "btnReset";
             btnReset.Size = new Size(75, 23);
             btnReset.TabIndex = 8;
@@ -559,7 +602,7 @@ namespace sqm_config
             // 
             // txtSQMcal
             // 
-            txtSQMcal.Location = new Point(89, 22);
+            txtSQMcal.Location = new Point(95, 22);
             txtSQMcal.Name = "txtSQMcal";
             txtSQMcal.Size = new Size(69, 23);
             txtSQMcal.TabIndex = 5;
@@ -576,7 +619,7 @@ namespace sqm_config
             // 
             // btnReadConfig
             // 
-            btnReadConfig.Location = new Point(13, 133);
+            btnReadConfig.Location = new Point(11, 192);
             btnReadConfig.Name = "btnReadConfig";
             btnReadConfig.Size = new Size(72, 23);
             btnReadConfig.TabIndex = 3;
@@ -586,11 +629,11 @@ namespace sqm_config
             // 
             // txtLog
             // 
-            txtLog.Location = new Point(28, 450);
+            txtLog.Location = new Point(28, 509);
             txtLog.Multiline = true;
             txtLog.Name = "txtLog";
             txtLog.ScrollBars = ScrollBars.Vertical;
-            txtLog.Size = new Size(493, 154);
+            txtLog.Size = new Size(493, 95);
             txtLog.TabIndex = 6;
             // 
             // button2
@@ -635,21 +678,11 @@ namespace sqm_config
             checkBox1.UseVisualStyleBackColor = true;
             checkBox1.CheckedChanged += checkBox1_CheckedChanged;
             // 
-            // checkBox2
-            // 
-            checkBox2.AutoSize = true;
-            checkBox2.Location = new Point(0, 0);
-            checkBox2.Name = "checkBox2";
-            checkBox2.Size = new Size(15, 14);
-            checkBox2.TabIndex = 11;
-            checkBox2.UseVisualStyleBackColor = true;
-            // 
             // Form1
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(551, 638);
-            Controls.Add(checkBox2);
             Controls.Add(checkBox1);
             Controls.Add(button3);
             Controls.Add(chkRefresh);
@@ -741,6 +774,9 @@ namespace sqm_config
         private System.ComponentModel.BackgroundWorker backgroundWorker1;
         private System.ComponentModel.BackgroundWorker backgroundWorker2;
         private System.ComponentModel.BackgroundWorker backgroundWorker3;
-        private CheckBox checkBox2;
+        private Label label11;
+        private TextBox txtDF;
+        private Button button4;
+        private Button button5;
     }
 }

@@ -18,6 +18,7 @@ namespace sqm_config
         private bool isConnected = false;
 
         private DataStreamer streamer;
+     
 
         public Form1()
         {
@@ -36,17 +37,13 @@ namespace sqm_config
 
         private void InitializeChart()
         {
-            streamer = formsPlot2.Plot.Add.DataStreamer(100);
-
-            for (int x = 0; x < 25; x++)
-            {
-                double y = Generate.RandomWalker.Next();
-                streamer.Add(y);
-            }
+            streamer = formsPlot2.Plot.Add.DataStreamer(720);
 
             streamer.ViewWipeRight();
 
             formsPlot2.Refresh();
+
+    
         }
 
         private async void button1_Click(object sender, EventArgs e)

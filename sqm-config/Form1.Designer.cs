@@ -93,9 +93,15 @@ namespace sqm_config
             backgroundWorker3 = new System.ComponentModel.BackgroundWorker();
             flowLayoutPanel1 = new FlowLayoutPanel();
             formsPlot2 = new ScottPlot.WinForms.FormsPlot();
+            tabControl1 = new TabControl();
+            tabPage1 = new TabPage();
+            tabPage2 = new TabPage();
             Version.SuspendLayout();
             groupBox1.SuspendLayout();
             groupBox2.SuspendLayout();
+            tabControl1.SuspendLayout();
+            tabPage1.SuspendLayout();
+            tabPage2.SuspendLayout();
             SuspendLayout();
             // 
             // cmbCOMports
@@ -135,7 +141,7 @@ namespace sqm_config
             Version.Controls.Add(label3);
             Version.Controls.Add(label2);
             Version.Controls.Add(label1);
-            Version.Location = new Point(32, 387);
+            Version.Location = new Point(8, 15);
             Version.Name = "Version";
             Version.Size = new Size(171, 221);
             Version.TabIndex = 3;
@@ -240,7 +246,7 @@ namespace sqm_config
             groupBox1.Controls.Add(label10);
             groupBox1.Controls.Add(label6);
             groupBox1.Controls.Add(lblMag);
-            groupBox1.Location = new Point(29, 77);
+            groupBox1.Location = new Point(6, 11);
             groupBox1.Name = "groupBox1";
             groupBox1.Size = new Size(493, 199);
             groupBox1.TabIndex = 4;
@@ -483,7 +489,7 @@ namespace sqm_config
             groupBox2.Controls.Add(txtSQMcal);
             groupBox2.Controls.Add(btnSQMCal);
             groupBox2.Controls.Add(btnReadConfig);
-            groupBox2.Location = new Point(206, 387);
+            groupBox2.Location = new Point(185, 15);
             groupBox2.Name = "groupBox2";
             groupBox2.Size = new Size(316, 221);
             groupBox2.TabIndex = 5;
@@ -631,7 +637,7 @@ namespace sqm_config
             // 
             // txtLog
             // 
-            txtLog.Location = new Point(28, 614);
+            txtLog.Location = new Point(8, 242);
             txtLog.Multiline = true;
             txtLog.Name = "txtLog";
             txtLog.ScrollBars = ScrollBars.Vertical;
@@ -661,7 +667,7 @@ namespace sqm_config
             // 
             // button3
             // 
-            button3.Location = new Point(357, 715);
+            button3.Location = new Point(333, 343);
             button3.Name = "button3";
             button3.Size = new Size(164, 23);
             button3.TabIndex = 9;
@@ -672,7 +678,7 @@ namespace sqm_config
             // checkBox1
             // 
             checkBox1.AutoSize = true;
-            checkBox1.Location = new Point(32, 712);
+            checkBox1.Location = new Point(14, 343);
             checkBox1.Name = "checkBox1";
             checkBox1.Size = new Size(188, 19);
             checkBox1.TabIndex = 10;
@@ -682,7 +688,7 @@ namespace sqm_config
             // 
             // flowLayoutPanel1
             // 
-            flowLayoutPanel1.Location = new Point(553, 628);
+            flowLayoutPanel1.Location = new Point(550, 797);
             flowLayoutPanel1.Name = "flowLayoutPanel1";
             flowLayoutPanel1.Size = new Size(200, 100);
             flowLayoutPanel1.TabIndex = 11;
@@ -690,26 +696,57 @@ namespace sqm_config
             // formsPlot2
             // 
             formsPlot2.DisplayScale = 1F;
-            formsPlot2.Location = new Point(29, 277);
+            formsPlot2.Location = new Point(6, 216);
             formsPlot2.Name = "formsPlot2";
-            formsPlot2.Size = new Size(493, 104);
+            formsPlot2.Size = new Size(493, 219);
             formsPlot2.TabIndex = 13;
+            // 
+            // tabControl1
+            // 
+            tabControl1.Controls.Add(tabPage1);
+            tabControl1.Controls.Add(tabPage2);
+            tabControl1.Location = new Point(1, 77);
+            tabControl1.Name = "tabControl1";
+            tabControl1.SelectedIndex = 0;
+            tabControl1.Size = new Size(519, 477);
+            tabControl1.TabIndex = 14;
+            // 
+            // tabPage1
+            // 
+            tabPage1.Controls.Add(groupBox1);
+            tabPage1.Controls.Add(formsPlot2);
+            tabPage1.Location = new Point(4, 24);
+            tabPage1.Name = "tabPage1";
+            tabPage1.Padding = new Padding(3);
+            tabPage1.Size = new Size(511, 449);
+            tabPage1.TabIndex = 0;
+            tabPage1.Text = "Measurements";
+            tabPage1.UseVisualStyleBackColor = true;
+            // 
+            // tabPage2
+            // 
+            tabPage2.Controls.Add(Version);
+            tabPage2.Controls.Add(groupBox2);
+            tabPage2.Controls.Add(button3);
+            tabPage2.Controls.Add(checkBox1);
+            tabPage2.Controls.Add(txtLog);
+            tabPage2.Location = new Point(4, 24);
+            tabPage2.Name = "tabPage2";
+            tabPage2.Padding = new Padding(3);
+            tabPage2.Size = new Size(539, 471);
+            tabPage2.TabIndex = 1;
+            tabPage2.Text = "Configuration";
+            tabPage2.UseVisualStyleBackColor = true;
             // 
             // Form1
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(551, 751);
-            Controls.Add(formsPlot2);
+            ClientSize = new Size(523, 571);
+            Controls.Add(tabControl1);
             Controls.Add(flowLayoutPanel1);
-            Controls.Add(checkBox1);
-            Controls.Add(button3);
             Controls.Add(chkRefresh);
             Controls.Add(button2);
-            Controls.Add(txtLog);
-            Controls.Add(groupBox2);
-            Controls.Add(groupBox1);
-            Controls.Add(Version);
             Controls.Add(button1);
             Controls.Add(lblPort);
             Controls.Add(cmbCOMports);
@@ -722,6 +759,10 @@ namespace sqm_config
             groupBox1.PerformLayout();
             groupBox2.ResumeLayout(false);
             groupBox2.PerformLayout();
+            tabControl1.ResumeLayout(false);
+            tabPage1.ResumeLayout(false);
+            tabPage2.ResumeLayout(false);
+            tabPage2.PerformLayout();
             ResumeLayout(false);
             PerformLayout();
         }
@@ -799,5 +840,8 @@ namespace sqm_config
         private Button button5;
         private FlowLayoutPanel flowLayoutPanel1;
         private ScottPlot.WinForms.FormsPlot formsPlot2;
+        private TabControl tabControl1;
+        private TabPage tabPage1;
+        private TabPage tabPage2;
     }
 }

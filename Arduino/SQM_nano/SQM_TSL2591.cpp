@@ -529,13 +529,13 @@ void SQM_TSL2591::takeReading(void)
     continue;  // Retry reading with new settings
   }
 
-  float IR = (float)ir / (gainValue * integrationValue / 200.F * niter);
-  float VIS = (float)vis / (gainValue * integrationValue / 200.F * niter);
+  float IR = (float)ir / (gainValue * integrationValue / 200.F * (float)niter);
+  float VIS = (float)vis / (gainValue * integrationValue / 200.F * (float)niter);
 
   // Calculate mpsas (magnitude per square arcsecond)
   if (VIS > 0)
   {
-    mpsas = 12.6 - 1.086 * log(VIS) + _calibrationOffset;
+    mpsas = 12.6F - 1.086F * log(VIS) + _calibrationOffset;
   }
   else
   {
@@ -545,7 +545,7 @@ void SQM_TSL2591::takeReading(void)
   // Calculate dmpsas (uncertainty in mpsas)
   if (vis > 0)
   {
-    dmpsas = 1.086 / sqrt((float)vis);
+    dmpsas = 1.086F / sqrt((float)vis);
   }
   else
   {

@@ -180,38 +180,75 @@ namespace sqm_config
 
             if (response.StartsWith("a,"))
             {
-                lblFull.Text = GetSplitValue(response, "full");
+                double full = double.Parse(GetSplitValue(response, "full"), CultureInfo.InvariantCulture);
+                lblFull.Text = full.ToString("0");
 
-                lblIR.Text = GetSplitValue(response, "ir");
+                double ir = double.Parse(GetSplitValue(response, "ir"), CultureInfo.InvariantCulture);
+                lblIR.Text = ir.ToString("0");
 
-                lblVIS.Text = GetSplitValue(response, "vis");
+                double vis = double.Parse(GetSplitValue(response, "vis"), CultureInfo.InvariantCulture);
+                lblVIS.Text = vis.ToString("0");
 
-                lblDMPSAS.Text = GetSplitValue(response, "dmpsas");
+                double dmpsas = double.Parse(GetSplitValue(response, "dmpsas"), CultureInfo.InvariantCulture);
+                lblDMPSAS.Text = dmpsas.ToString("0.000");
 
-                lblExp.Text = GetSplitValue(response, "integration") + " ms";
+                double integration = double.Parse(GetSplitValue(response, "integration"), CultureInfo.InvariantCulture);
+                lblExp.Text = integration.ToString("0") + " ms";
 
-                lblGain.Text = GetSplitValue(response, "gain") + " x";
+                double gain = double.Parse(GetSplitValue(response, "gain"), CultureInfo.InvariantCulture);
+                lblGain.Text = gain.ToString("0");
 
-                lblNiter.Text = GetSplitValue(response, "niter");
+                double niter = double.Parse(GetSplitValue(response, "niter"), CultureInfo.InvariantCulture);
+                lblNiter.Text = niter.ToString("0");
 
-                lblLux.Text = GetSplitValue(response, "lux");
+                double lux = double.Parse(GetSplitValue(response, "lux"), CultureInfo.InvariantCulture);
+                lblLux.Text = lux.ToString("0.0000");
 
-                lblTemp.Text = GetSplitValue(response, "temp") + " °C";
+                double temp = double.Parse(GetSplitValue(response, "temp"), CultureInfo.InvariantCulture);
+                lblTemp.Text = temp.ToString("0.00") + " °C";
 
-                lblHum.Text = GetSplitValue(response, "hum") + " %";
+                double hum = double.Parse(GetSplitValue(response, "hum"), CultureInfo.InvariantCulture);
+                lblHum.Text = hum.ToString("0.00") + " %";
 
-                lblPress.Text = GetSplitValue(response, "pres");
+                double press = double.Parse(GetSplitValue(response, "pres"), CultureInfo.InvariantCulture);
+                lblPress.Text = press.ToString("0.00") + " hPa";
 
-                lblMag.Text = GetSplitValue(response, "mag");
+                double mag = double.Parse(GetSplitValue(response, "mag"), CultureInfo.InvariantCulture);
+                lblMag.Text = mag.ToString("0.000");
 
                 System.DateTime currentTime = System.DateTime.Now;
 
-                double magValues = double.Parse(lblMag.Text, CultureInfo.InvariantCulture);
-                streamer.Add(new Coordinates(currentTime.ToOADate(), magValues));
+                streamer.Add(new Coordinates(currentTime.ToOADate(), mag));
 
                 if (streamer.Data.Coordinates.Count() > 18000)
                     streamer.Data.Coordinates.RemoveAt(0);
                 formsPlot2.Refresh();
+
+                // CSV
+                string xlsDateTime = currentTime.ToString("yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture);
+
+                string csv = $"{xlsDateTime};{mag};{lux};{full};{ir};{vis};{integration};{gain};{temp};{hum};{press}";
+                string path = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+                // add /sqmeter folder
+                path = System.IO.Path.Combine(path, "sqmeter");
+                // create path if not exist
+                System.IO.Directory.CreateDirectory(path);
+                string filename = $"sqmeter-{currentTime:yyyy-MM-dd}.csv";
+
+                //create header if file does not exist
+                if (!System.IO.File.Exists(System.IO.Path.Combine(path, filename)))
+                {
+                    System.IO.File.AppendAllText(System.IO.Path.Combine(path, filename), "UT;mag;lux;full;ir;vis;integration;gain;temp;hum;press" + Environment.NewLine);
+                }
+
+                try
+                {
+                    System.IO.File.AppendAllText(System.IO.Path.Combine(path, filename), csv + Environment.NewLine);
+                }
+                catch (Exception ex)
+                {
+                    //noop
+                }
             }
         }
 

@@ -6,7 +6,7 @@
 #ifndef CONFIG_H
 #define CONFIG_H
 
-#define SERIAL_BAUD 115200    //Serial port baud Default is 115200
+#define SERIAL_BAUD 9600    //Serial port baud Default is 115200
 
 // Select only one your display
 #define SH1106_ON  // SH1106  1.3"  128x64 OLED display is default

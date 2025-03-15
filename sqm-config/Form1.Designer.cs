@@ -100,6 +100,7 @@ namespace sqm_config
             tabPage3 = new TabPage();
             chkAutoRefreshStartup = new CheckBox();
             chkConnectStartup = new CheckBox();
+            button6 = new Button();
             Version.SuspendLayout();
             groupBox1.SuspendLayout();
             groupBox2.SuspendLayout();
@@ -479,6 +480,7 @@ namespace sqm_config
             // 
             // groupBox2
             // 
+            groupBox2.Controls.Add(button6);
             groupBox2.Controls.Add(button5);
             groupBox2.Controls.Add(label11);
             groupBox2.Controls.Add(txtDF);
@@ -503,11 +505,11 @@ namespace sqm_config
             // 
             // button5
             // 
-            button5.Location = new Point(128, 192);
+            button5.Location = new Point(109, 192);
             button5.Name = "button5";
-            button5.Size = new Size(75, 23);
+            button5.Size = new Size(103, 23);
             button5.TabIndex = 18;
-            button5.Text = "Reboot";
+            button5.Text = "Soft Reboot";
             button5.UseVisualStyleBackColor = true;
             button5.Click += button5_Click_1;
             // 
@@ -783,6 +785,16 @@ namespace sqm_config
             chkConnectStartup.UseVisualStyleBackColor = true;
             chkConnectStartup.CheckedChanged += chkConnectStartup_CheckedChanged;
             // 
+            // button6
+            // 
+            button6.Location = new Point(109, 163);
+            button6.Name = "button6";
+            button6.Size = new Size(103, 23);
+            button6.TabIndex = 19;
+            button6.Text = "Hard Reboot";
+            button6.UseVisualStyleBackColor = true;
+            button6.Click += button6_Click;
+            // 
             // Form1
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
@@ -889,5 +901,6 @@ namespace sqm_config
         private TabPage tabPage3;
         private CheckBox chkAutoRefreshStartup;
         private CheckBox chkConnectStartup;
+        private Button button6;
     }
 }

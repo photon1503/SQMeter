@@ -13,7 +13,7 @@ internal class SQMSerial
 
     public event Action<string> DataReceived; // Event for UI updates
 
-    public SQMSerial(string portName, int baudRate = 115200)
+    public SQMSerial(string portName, int baudRate = 9600)
     {
         _syncContext = SynchronizationContext.Current;
         _serialPort = new SerialPort(portName, baudRate, Parity.None, 8, StopBits.One);

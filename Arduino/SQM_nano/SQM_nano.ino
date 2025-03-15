@@ -30,7 +30,7 @@ ttps://easyeda.com/hujer.roman/sqm-hr
 
 */
 #define Version "1.0.9"
-#define SERIAL_NUMBER "00000002"
+#define SERIAL_NUMBER "00000001"
 #include "Config.h"
 #include "Setup.h"
 #include "Validate.h"
@@ -42,6 +42,7 @@ ttps://easyeda.com/hujer.roman/sqm-hr
 // #include <Adafruit_TSL2591.h>
 #include "SQM_TSL2591.h"
 #include <Adafruit_BME280.h>
+#include <avr/wdt.h>  
 
 #include <math.h>
 
@@ -111,6 +112,7 @@ void setup()
   float DF = ReadEEDFCal();
   sqm.setDF(DF);               // DF
 
+   wdt_enable(WDTO_8S);
 } // end of Setup
 
 //=======================================================================================
@@ -346,6 +348,9 @@ byte index = 0;
 
 void loop()
 {
+    // Reset the watchdog timer to prevent a reset
+    wdt_reset();
+
   while (Serial.available())
   {
     char received = Serial.read();
@@ -358,7 +363,7 @@ void loop()
     if (received == 'x')
     {                              // End of command
       inputBuffer[index] = '\0';   // Null-terminate
-      processCommand(inputBuffer); // Pass buffer to function
+      processCommand(inputBuffer); // Pass buffer to functiond
       index = 0;                   // Reset buffer
     }
     else if (index < BUFFER_SIZE - 1)

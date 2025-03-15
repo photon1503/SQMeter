@@ -180,6 +180,7 @@ void SQM_TSL2591::setGain(tsl2591Gain_t gain)
     if (verbose)
     {
       Serial.println("Gain not found!");
+      _gain = 1;
     }
     break;
   }
@@ -244,6 +245,7 @@ void SQM_TSL2591::setTiming(tsl2591IntegrationTime_t integration)
       Serial.println("Integration not found!");
       Serial.println(_integration);
     }
+     _integration = TSL2591_INTEGRATIONTIME_100MS; // Reset to default
     break;
   }
 }
@@ -442,7 +444,7 @@ void SQM_TSL2591::takeReading(void)
     }
 
     // Check for saturation or faint light and adjust settings accordingly
-    if (full == 0xFFFF || ir == 0xFFFF)
+    if (full >= 65000 || ir >= 65000)
     {
       // Sensor is saturated
       if (verbose)
@@ -712,16 +714,18 @@ float SQM_TSL2591::calculateLux(uint16_t ch0, uint16_t ch1) /*wbp*/
     break;
   case TSL2591_GAIN_HIGH:
     //      again = 428.0F;
-    again = 425.0F; /*wbp*/
+    again = 428.0F; /*wbp*/
     break;
   case TSL2591_GAIN_MAX:
     //      again = 9876.0F;
-    again = 7850.0F; /*wbp*/
+    again = 9876.0F; /*wbp*/
     break;
   default:
     again = 1.0F;
     break;
   }
+
+
 
   // Calculate counts per lux (cpl)
   cpl = (atime * again) / (float)TSL2591_LUX_DF;
@@ -733,11 +737,13 @@ float SQM_TSL2591::calculateLux(uint16_t ch0, uint16_t ch1) /*wbp*/
   // The highest value is the approximate lux equivalent
   lux = lux1 > lux2 ? lux1 : lux2;
 
+
   // Ensure lux is non-negative
   if (lux < 0)
   {
     lux = 0;
   }
+
 
   return lux;
 }

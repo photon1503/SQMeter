@@ -276,6 +276,11 @@ namespace sqm_config
             // add local time to log
             string time = System.DateTime.Now.ToString("HH:mm:ss");
             txtLog.AppendText($"{time} Received: {data}\r\n");
+
+            while (txtLog.Lines.Length > 1000)
+            {
+                txtLog.Text = txtLog.Text.Remove(0, txtLog.Lines[0].Length + 1);
+            }
         }
 
         private async void ReadConfig()
@@ -457,6 +462,26 @@ namespace sqm_config
         {
             Properties.Settings.Default.AutoRefresh = chkAutoRefreshStartup.Checked;
             Properties.Settings.Default.Save();
+        }
+
+        private void button6_Click(object sender, EventArgs e)
+        {
+            _sqmSerial.Close();
+            isConnected = false;
+
+            string comPort = cmbCOMports.SelectedItem.ToString();
+            using (SerialPort port = new SerialPort(comPort, 115200)) // Match baud rate
+            {
+                port.DtrEnable = true;  // Set DTR to HIGH
+                port.RtsEnable = true;  // Set RTS to HIGH
+                port.Open();
+                Thread.Sleep(100);       // Short delay
+                port.DtrEnable = false; // Set DTR to LOW (this triggers reset)
+                port.RtsEnable = false; // Set RTS to LOW
+                port.Close();
+            }
+
+            connect();
         }
     }
 }

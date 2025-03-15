@@ -30,7 +30,7 @@ ttps://easyeda.com/hujer.roman/sqm-hr
 
 */
 #define Version "1.0.9"
-#define SERIAL_NUMBER "20200210"
+#define SERIAL_NUMBER "00000002"
 #include "Config.h"
 #include "Setup.h"
 #include "Validate.h"

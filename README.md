@@ -5,10 +5,12 @@ An **Arduino-compatible Sky Quality Meter** leveraging the **TSL2591** and **BME
 ---
 
 ## Key Features
+### Firmware
 - **SQM-LU Serial Protocol**: Compatible with the standard ASCOM driver for Sky Quality Meter and Temperature.
 - **Extended Protocol**: Includes additional data points.
 - **EEPROM Storage**: Save calibration factors for SQM and temperature directly in EEPROM.
 - **Temperature Compensation**: Enhanced accuracy for the TSL2591 sensor with temperature compensation.
+### ASCOM Driver
 - **ASCOM Platform 7 Driver**: Fully compatible with Weather Conditions.
   - **Data Points**:
     1. Sky Quality
@@ -20,6 +22,7 @@ An **Arduino-compatible Sky Quality Meter** leveraging the **TSL2591** and **BME
   - **Customizable Rolling Average**: Configure rolling averages for measurements over a specified time period.
   - **ASCOM Conformance Test**: Successfully passed.
     ![ASCOM Driver Interface](images/image.png)
+### Windows Monitoring Tool
 - **Windows Monitoring Tool**: Standalone program for real-time monitoring and configuration.
 ![alt text](image-2.png)![alt text](image-3.png)
 

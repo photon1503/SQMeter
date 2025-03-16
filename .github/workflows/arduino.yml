@@ -39,7 +39,7 @@ jobs:
 
       # Upload the compiled .hex file as an artifact
       - name: Upload .hex file as artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v2
         with:
           name: firmware
           path: ./Arduino/Firmware/*.hex

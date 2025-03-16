@@ -17,29 +17,12 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      # Set up the Arduino CLI
-      - name: Set up Arduino CLI
-        run: |
-          curl -fsSL https://raw.githubusercontent.com/arduino/arduino-cli/master/install.sh | sh
-          echo "$HOME/.local/bin" >> $GITHUB_PATH
-
-      # Install the required Arduino core (e.g., Arduino AVR)
-      - name: Install Arduino AVR core
-        run: |
-          arduino-cli core install arduino:avr
-
-      - name: Install required libraries
-        run: |
-          arduino-cli lib install "Adafruit_Sensor"
-
-      # Compile the sketch
-      - name: Compile sketch
-        run: |
-          arduino-cli compile --fqbn rduino:avr:nano:cpu=atmega328 ./Arduino/SQM_nano/SQM_nano.ino
-
-      # Upload the compiled .hex file as an artifact
-      - name: Upload .hex file as artifact
-        uses: actions/upload-artifact@v2
+      - uses: arduino/compile-sketches@v1
         with:
-          name: firmware
-          path: ./Arduino/Firmware/*.hex
+          fqbn: "arduino:avr:nano:cpu=atmega328"
+          platforms: |
+            - name: arduino:samd
+          libraries: |
+            - name: Adafruit Sensor
+          sketch-paths: |
+            - Arduino/SQM_nano

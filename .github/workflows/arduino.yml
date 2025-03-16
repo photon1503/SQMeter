@@ -3,10 +3,10 @@ name: Compile Arduino Sketch
 on:
   push:
     branches:
-      - main  # Trigger on pushes to the main branch
+      - master  # Trigger on pushes to the main branch
   pull_request:
     branches:
-      - main  # Trigger on pull requests to the main branch
+      - master  # Trigger on pull requests to the main branch
 
 jobs:
   compile:

@@ -418,6 +418,7 @@ void SQM_TSL2591::takeReading(void)
   niter = 0; // Initialize the iteration counter
 
   bool gainAdjusted = false; // Track if gain was adjusted
+static float lastVis = -1;
 
   while (niter < MAX_ITERATIONS)
   {
@@ -443,6 +444,13 @@ void SQM_TSL2591::takeReading(void)
       Serial.println(full);
     }
 
+if (fabs(vis - lastVis) < 10.0) // No significant change
+{
+  if (verbose)
+      Serial.println("Light readings not improving. Exiting.");
+  break;
+}
+lastVis = vis;
     // Check for saturation or faint light and adjust settings accordingly
     if (full >= 65000 || ir >= 65000)
     {
@@ -554,11 +562,7 @@ void SQM_TSL2591::takeReading(void)
     dmpsas = 0.0; // Handle division by zero
   }
 
-  if (dmpsas > 0.5)
-  {
-    // retry
-    takeReading();
-  }
+
   lux = calculateLux(full, ir);
 }
 

@@ -35,6 +35,7 @@ ttps://easyeda.com/hujer.roman/sqm-hr
 #include "Setup.h"
 #include "Validate.h"
 
+
 #include <Wire.h>
 #include <EEPROM.h>
 

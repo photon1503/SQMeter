@@ -170,7 +170,7 @@ namespace ASCOM.SQMeter.ObservingConditions
                 // If you are using a serial COM port you will find the COM port name selected by the user through the setup dialogue in the comPort variable.
 
                 SharedResources.SharedSerial.PortName = comPort;
-                SharedResources.SharedSerial.Speed = SerialSpeed.ps115200;
+                SharedResources.SharedSerial.Speed = SerialSpeed.ps9600;
                 if (pollingInterval < 2000) pollingInterval = 2000;
 
                 SharedResources.SharedSerial.ReceiveTimeout = pollingInterval;

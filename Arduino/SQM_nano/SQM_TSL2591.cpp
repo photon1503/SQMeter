@@ -617,55 +617,6 @@ void SQM_TSL2591::write8(uint8_t reg, uint8_t value)
   Wire.endTransmission();
 }
 
-float SQM_TSL2591::calculateLux2(uint16_t ch0, uint16_t ch1)
-{
-  // Check for overflow conditions first
-  if ((ch0 == 0xFFFF) || (ch1 == 0xFFFF))
-  {
-    // Signal an overflow
-    return 0.0;
-  }
-
-  // Calculate the ratio of the channel values (Channel1/Channel0)
-  float ratio = (float)ch1 / (float)ch0;
-
-  // Adjust the channel values based on the integration time setting
-  float integrationFactor;
-
-  integrationFactor = integrationValue / 100.0;
-
-  // Scale the channel values
-  float d0 = (float)ch0 / (gainValue * integrationFactor);
-  float d1 = (float)ch1 / (gainValue * integrationFactor);
-
-  // Calculate lux based on the formula provided in the datasheet
-  float lux = 0.0;
-  if (ratio <= 0.5)
-  {
-    lux = (0.0304F * d0) - (0.062F * d0 * pow(ratio, 1.4F));
-  }
-  else if (ratio <= 0.61)
-  {
-    lux = (0.0224F * d0) - (0.031F * d1);
-  }
-  else if (ratio <= 0.80)
-  {
-    lux = (0.0128F * d0) - (0.0153F * d1);
-  }
-  else if (ratio <= 1.30)
-  {
-    lux = (0.00146F * d0) - (0.00112F * d1);
-  }
-  else
-  {
-    lux = 0.0F;
-  }
-  // Adjust lux based on the gain and integration time
-  lux *= (gainValue * integrationFactor);
-
-  return lux;
-}
-
 float SQM_TSL2591::calculateLux(uint16_t ch0, uint16_t ch1) /*wbp*/
 {
   float atime, again; /*wbp*/

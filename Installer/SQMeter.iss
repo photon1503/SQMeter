@@ -13,8 +13,8 @@ AppVersion={#myAppVersion}
 AppVerName="ASCOM SQMeter Driver {#myAppVersion}"
 AppPublisher=photon <gerald.hitz@gmail.com>
 AppPublisherURL=mailto:gerald.hitz@gmail.com
-AppSupportURL=https://ascomtalk.groups.io/g/Help
-AppUpdatesURL=https://ascom-standards.org/
+AppSupportURL=https://github.com/photon1503/SQMeter/issues
+AppUpdatesURL=https://github.com/photon1503/SQMeter
 VersionInfoVersion=1.0.1
 MinVersion=6.1.7601
 DefaultDirName="{cf}\ASCOM\ObservingConditions"
@@ -64,7 +64,7 @@ Filename: "{app}\ASCOM.SQMeter.exe"; Parameters: "/unregister"
 
 [Code]
 const
-   REQUIRED_PLATFORM_VERSION = 6.2;    // Set this to the minimum required ASCOM Platform version for this application
+   REQUIRED_PLATFORM_VERSION = 7;    // Set this to the minimum required ASCOM Platform version for this application
 
 //
 // Function to return the ASCOM Platform's version number as a double.

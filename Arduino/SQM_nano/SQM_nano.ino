@@ -77,7 +77,7 @@ uint16_t counter = 0;
 byte page = 0;
 String BME_Msg;
 String TSL_Msg;
-char oled[6] = "A5,11";
+
 
 void setup()
 {
@@ -153,59 +153,7 @@ void processCommand(const char *command)
     sqm.verbose = false;
     Serial.println("y,0");
   }
-  else if (strcmp(command, "r") == 0)
-  {
-    ReadWeather();
-    if (ReadEEAutoTempCal())
-      sqm.setTemperature(temp); // temp call
-    // mySQM();
-    sqm.takeReading();
-
-    float mag = sqm.mpsas + ReadEESqmCalOffset();
-
-    sqm_string = String((mag < 0) ? -mag : mag, 2);
-    while (sqm_string.length() < 5)
-    {
-      sqm_string = '0' + sqm_string;
-    }
-    _sign = (mag < 0) ? '-' : ' ';
-    sqm_string = _sign + sqm_string;
-
-    temp = get_temperature();
-    temp_string = String((temp < 0) ? -temp : temp, 1);
-    while (temp_string.length() < 5)
-    {
-      temp_string = '0' + temp_string;
-    }
-    _sign = (temp < 0) ? '-' : ' ';
-    temp_string = _sign + temp_string;
-    Serial.println("r," + sqm_string + "m,0000000000Hz," + counter_string + "c,0000000.000s," + temp_string + 'C');
-  }
-  else if (strcmp(command, "u") == 0)
-  {
-    Serial.println("u," + sqm_string + "m,0000000000Hz," + counter_string + "c,0000000.000s," + temp_string + 'C');
-  }
-  else if (strcmp(command, "g") == 0)
-  {
-    sqm_string = String((SqmCalOffset < 0) ? -SqmCalOffset : SqmCalOffset, 2);
-    while (sqm_string.length() < 6)
-    {
-      sqm_string = '0' + sqm_string;
-    }
-    _sign = (SqmCalOffset < 0) ? '-' : ' ';
-    sqm_string = _sign + sqm_string;
-    temp_string = String((TempCalOffset < 0) ? -TempCalOffset : TempCalOffset, 1);
-    while (temp_string.length() < 5)
-    {
-      temp_string = '0' + temp_string;
-    }
-    _sign = (TempCalOffset < 0) ? '-' : ' ';
-    temp_string = _sign + temp_string;
-    oled[4] = '0';
-    String autocal = ReadEEAutoTempCal() ? "Y" : "N";
-    Serial.println("g," + sqm_string + "m," + temp_string + "C," + autocal + "," +  sqm.getDF() );
-   }
-  // advanced response
+  
 
   else if (command[0] == 'a')
   {

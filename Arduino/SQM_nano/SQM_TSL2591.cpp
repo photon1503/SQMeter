@@ -430,9 +430,9 @@ static float lastVis = -1;
     calibrateReadingsForTemperature(ir, full);
 
 
-    vis = (full > ir) ? (full - ir) : 0; // Ensure vis is non-negative
-    if (ir > vis)
-      vis = 1.0;
+    vis = (full > ir) ? (full - ir) : 1; // Ensure vis is non-negative
+    //if (ir > vis)
+    //  vis = 1.0;  //why?
 
     if (verbose)
     {

@@ -42,4 +42,4 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: firmware
-          path: ./path/to/your/sketch/build/arduino.avr.uno/*.hex
+          path: ./Arduino/Firmware/*.hex

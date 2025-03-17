@@ -69,6 +69,7 @@ namespace sqm_config
             label6 = new Label();
             lblMag = new Label();
             groupBox2 = new GroupBox();
+            button6 = new Button();
             button5 = new Button();
             label11 = new Label();
             txtDF = new TextBox();
@@ -100,7 +101,7 @@ namespace sqm_config
             tabPage3 = new TabPage();
             chkAutoRefreshStartup = new CheckBox();
             chkConnectStartup = new CheckBox();
-            button6 = new Button();
+            btnFirmware = new Button();
             Version.SuspendLayout();
             groupBox1.SuspendLayout();
             groupBox2.SuspendLayout();
@@ -139,6 +140,7 @@ namespace sqm_config
             // 
             // Version
             // 
+            Version.Controls.Add(btnFirmware);
             Version.Controls.Add(lblSerial);
             Version.Controls.Add(lblFeature);
             Version.Controls.Add(lblModel);
@@ -503,6 +505,16 @@ namespace sqm_config
             groupBox2.TabStop = false;
             groupBox2.Text = "Config";
             // 
+            // button6
+            // 
+            button6.Location = new Point(109, 163);
+            button6.Name = "button6";
+            button6.Size = new Size(103, 23);
+            button6.TabIndex = 19;
+            button6.Text = "Hard Reboot";
+            button6.UseVisualStyleBackColor = true;
+            button6.Click += button6_Click;
+            // 
             // button5
             // 
             button5.Location = new Point(109, 192);
@@ -785,15 +797,15 @@ namespace sqm_config
             chkConnectStartup.UseVisualStyleBackColor = true;
             chkConnectStartup.CheckedChanged += chkConnectStartup_CheckedChanged;
             // 
-            // button6
+            // btnFirmware
             // 
-            button6.Location = new Point(109, 163);
-            button6.Name = "button6";
-            button6.Size = new Size(103, 23);
-            button6.TabIndex = 19;
-            button6.Text = "Hard Reboot";
-            button6.UseVisualStyleBackColor = true;
-            button6.Click += button6_Click;
+            btnFirmware.Location = new Point(41, 192);
+            btnFirmware.Name = "btnFirmware";
+            btnFirmware.Size = new Size(92, 23);
+            btnFirmware.TabIndex = 20;
+            btnFirmware.Text = "New Firmware";
+            btnFirmware.UseVisualStyleBackColor = true;
+            btnFirmware.Click += btnFirmware_Click;
             // 
             // Form1
             // 
@@ -902,5 +914,6 @@ namespace sqm_config
         private CheckBox chkAutoRefreshStartup;
         private CheckBox chkConnectStartup;
         private Button button6;
+        private Button btnFirmware;
     }
 }

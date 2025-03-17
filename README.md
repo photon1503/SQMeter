@@ -57,6 +57,9 @@ An **Arduino-compatible Sky Quality Meter** leveraging the **TSL2591** and **BME
 ![3D Printed Case](image.png)
 ![alt text](image-4.png)
 
+### Firmware upload
+"C:\Users\geral\AppData\Local\Arduino15\packages\arduino\tools\avrdude\6.3.0-arduino17/bin/avrdude" "-CC:\Users\geral\AppData\Local\Arduino15\packages\arduino\tools\avrdude\6.3.0-arduino17/etc/avrdude.conf" -v -V -patmega328p -carduino "-PCOM7" -b115200 -D "-Uflash:w:C:\Users\geral\AppData\Local\arduino\sketches\47B567C85DD8D0526220BB04F9A4790D/SQM_nano.ino.hex:i"
+
 ---
 
 ## Serial Protocol

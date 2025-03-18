@@ -210,18 +210,18 @@ private:
 
   boolean _initialized;
 
-  const int smoothnumReadings = 5; // Number of readings to average
-  float smoothReadings[5];         // Array to store the smoothed readings
+  const int smoothnumReadings = 10; // Number of readings to average
+  float smoothReadings[10];         // Array to store the smoothed readings
   int smoothIndex = 0;             // Index for the circular buffer
   float smoothTotal = 0;           // Running total for smoothing
   float smoothAverage = 0;         // Smoothed average value
 
-  float smoothIRReadings[5];         // Array to store the smoothed readings
+  float smoothIRReadings[10];         // Array to store the smoothed readings
   int smoothIRIndex = 0;             // Index for the circular buffer
   float smoothIRTotal = 0;           // Running total for smoothing
   float smoothIRAverage = 0;         // Smoothed average value
 
-  float smoothFULLReadings[5];         // Array to store the smoothed readings
+  float smoothFULLReadings[10];         // Array to store the smoothed readings
   int smoothFULLIndex = 0;             // Index for the circular buffer
   float smoothFULLTotal = 0;           // Running total for smoothing
   float smoothFULLAverage = 0;         // Smoothed average value

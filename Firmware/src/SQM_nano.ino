@@ -177,23 +177,16 @@ void processCommand(const char *command)
   }
   else if (strcmp(command, "g") == 0)
   {
-    sqm_string = String((SqmCalOffset < 0) ? -SqmCalOffset : SqmCalOffset, 2);
-    while (sqm_string.length() < 6)
-    {
-      sqm_string = '0' + sqm_string;
-    }
-    _sign = (SqmCalOffset < 0) ? '-' : ' ';
-    sqm_string = _sign + sqm_string;
-    temp_string = String((TempCalOffset < 0) ? -TempCalOffset : TempCalOffset, 1);
-    while (temp_string.length() < 5)
-    {
-      temp_string = '0' + temp_string;
-    }
-    _sign = (TempCalOffset < 0) ? '-' : ' ';
-    temp_string = _sign + temp_string;
-
+    Serial.print("g,");
+    Serial.print(SqmCalOffset,6);
+    Serial.print(",");
+    Serial.print(TempCalOffset,6);
+    Serial.print(",");
     String autocal = ReadEEAutoTempCal() ? "Y" : "N";
-    Serial.println("g," + sqm_string + "m," + temp_string + "C," + autocal + "," + sqm.getDF());
+    Serial.print(autocal);
+    Serial.print(",");
+    Serial.println(sqm.getDF());
+    
   }
 
   else if (command[0] == 'a')
@@ -228,7 +221,7 @@ void processCommand(const char *command)
     Serial.print(",niter:");
     Serial.print(sqm.niter);
     Serial.print(",lux:");
-    Serial.print(sqm.getSmoothAverage(), 6);
+    Serial.print(sqm.lux, 6);
     Serial.print(",temp:");
     Serial.print(temp);
     Serial.print(",hum:");

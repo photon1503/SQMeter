@@ -18,7 +18,16 @@ internal class SQMSerial
         _syncContext = SynchronizationContext.Current;
         _serialPort = new SerialPort(portName, baudRate, Parity.None, 8, StopBits.One);
         _serialPort.DataReceived += SerialPort_DataReceived;
-        _serialPort.Open();
+        try
+        {
+            _serialPort.Open();
+        }
+        catch
+        {
+            MessageBox.Show("Cannot open port!");
+                
+                
+                }
     }
 
     // Asynchronous Send Command

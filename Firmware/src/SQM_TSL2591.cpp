@@ -595,15 +595,11 @@ void SQM_TSL2591::takeReading(void)
 
   lux *= TSL2591_LUX_DF;
 
-  if (lux == (float).0F)
-  {
-    // sqm = 20.08355939
-    lux = (float)0.0001F;
-  }
-  if (lux < (float)0.00001F)
+
+  if (lux < (float)0.0000188F)
   {
     // sqm = 25.08355939
-    lux = (float)0.00001F;
+    lux = (float)0.0000188F;
   }
   //mpsas = log10(lux / 108000) / (float)-0.45; // calculate SQM
   mpsas = log10(lux / 108400) / (float)-0.4; // calculate SQM

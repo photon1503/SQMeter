@@ -589,14 +589,18 @@ void SQM_TSL2591::takeReading(void)
 
   lux *= TSL2591_LUX_DF;
 
+  updateSmoothAverage(lux);
+  float smoothLux = getSmoothAverage();
+
+
   
-  if (lux < (float)0.00000188F)
+  if (smoothLux < (float)0.00000188F)
   {
     // sqm = 25.08355939
-    lux = (float)0.0000188F;
+    smoothLux = (float)0.0000188F;
   }
   // mpsas = log10(lux / 108000) / (float)-0.45; // calculate SQM
-  mpsas = log10(lux / 108400) / (float)-0.4; // calculate SQM
+  mpsas = log10(smoothLux / 108400) / (float)-0.4; // calculate SQM
   // sqm = -2.5 * log10(lux) + 21.58;
   sqm = 0;
   nelm = (float)7.93 - 5.0 * log10((pow(10, (4.316 - (mpsas / 5.0))) + (float)1.0));

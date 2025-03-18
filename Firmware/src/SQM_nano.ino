@@ -221,7 +221,7 @@ void processCommand(const char *command)
     Serial.print(",niter:");
     Serial.print(sqm.niter);
     Serial.print(",lux:");
-    Serial.print(sqm.lux, 6);
+    Serial.print(sqm.getSmoothAverage(), 6);
     Serial.print(",temp:");
     Serial.print(temp);
     Serial.print(",hum:");

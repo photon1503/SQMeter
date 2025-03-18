@@ -150,7 +150,7 @@ public:
   float getDF();
   void setSQMoffset(float df);
   float getSQMoffset();
-  float calculateLux(uint16_t ch0, uint16_t ch1);
+  float calculateLux(float ch0, float ch1);
 
   void setGain(tsl2591Gain_t gain);
   void setTiming(tsl2591IntegrationTime_t integration);
@@ -183,6 +183,16 @@ public:
   bool getEvent(sensors_event_t *);
   void getSensor(sensor_t *);
 
+  void updateSmoothAverage(float newLux);
+  float getSmoothAverage();
+
+  void updateSmoothIRAverage(float newLux);
+  float getSmoothIRAverage();
+
+  void updateSmoothFULLAverage(float newLux);
+  float getSmoothFULLAverage();
+
+
 private:
   tsl2591IntegrationTime_t _integration;
   tsl2591Gain_t _gain;
@@ -199,5 +209,21 @@ private:
   uint8_t _readRegister(uint8_t reg);
 
   boolean _initialized;
+
+  const int smoothnumReadings = 5; // Number of readings to average
+  float smoothReadings[5];         // Array to store the smoothed readings
+  int smoothIndex = 0;             // Index for the circular buffer
+  float smoothTotal = 0;           // Running total for smoothing
+  float smoothAverage = 0;         // Smoothed average value
+
+  float smoothIRReadings[5];         // Array to store the smoothed readings
+  int smoothIRIndex = 0;             // Index for the circular buffer
+  float smoothIRTotal = 0;           // Running total for smoothing
+  float smoothIRAverage = 0;         // Smoothed average value
+
+  float smoothFULLReadings[5];         // Array to store the smoothed readings
+  int smoothFULLIndex = 0;             // Index for the circular buffer
+  float smoothFULLTotal = 0;           // Running total for smoothing
+  float smoothFULLAverage = 0;         // Smoothed average value
 };
 #endif

@@ -76,6 +76,15 @@ SQM_TSL2591::SQM_TSL2591(int32_t sensorID)
 
   // we cant do wire initialization till later, because we havent loaded Wire
   // yet
+  for (int i = 0; i < smoothnumReadings; i++)
+  {
+    smoothReadings[i] = 0;
+    smoothFULLReadings[i] = 0;
+    smoothIRReadings[i] = 0;
+  }
+  smoothTotal = 0;
+  smoothIRTotal = 0;
+  smoothFULLTotal = 0;
 }
 
 boolean SQM_TSL2591::begin(void)
@@ -197,7 +206,6 @@ void SQM_TSL2591::setDF(float df)
 {
   TSL2591_LUX_DF = df;
 }
-
 
 void SQM_TSL2591::setSQMoffset(float of)
 {
@@ -435,50 +443,25 @@ void SQM_TSL2591::takeReading(void)
   bool gainAdjusted = false; // Track if gain was adjusted
   static float lastVis = -1;
 
-  const int numReadings = 2;
-  uint32_t totalVis = 0, totalIr = 0, totalFull = 0;
-
   while (niter < MAX_ITERATIONS)
   {
 
     niter++;
     configSensor();
-    totalVis = 0, totalIr = 0, totalFull = 0;
-    for (int i = 0; i < numReadings; i++)
+
+    lum = getFullLuminosity();
+    fir += lum >> 16;
+    ffull += lum & 0xFFFF;
+
+    if (verbose)
     {
-      lum = getFullLuminosity();
-      totalIr += lum >> 16;
-      totalFull += lum & 0xFFFF;
-
-      if (verbose)
-      {
-        Serial.print("Raw IR: ");
-        Serial.print(lum >> 16);
-        Serial.print(" Raw Full: ");
-        Serial.println(lum & 0xFFFF);
-      }
-
-      uint32_t startTime = millis();
-      while (millis() - startTime < 50)
-      {
-        // Yield control to other tasks
-        yield();
-      }
-      // delay(50); // Allow time between readings
+      Serial.print("Raw IR: ");
+      Serial.print(lum >> 16);
+      Serial.print(" Raw Full: ");
+      Serial.println(lum & 0xFFFF);
     }
-    fir = (float)totalIr / numReadings;
-    ffull = (float)totalFull / numReadings;
 
-
-    calibrateReadingsForTemperature(fir, ffull); 
-
-    ir = fir;
-    full = ffull;
-
-    fvis = (ffull > fir) ? (ffull - fir) : 1; // Ensure vis is non-negative
-    vis = fvis;
-
-
+    calibrateReadingsForTemperature(fir, ffull);
     if (verbose)
     {
       Serial.print("vis: ");
@@ -488,6 +471,19 @@ void SQM_TSL2591::takeReading(void)
       Serial.print(" full: ");
       Serial.println(ffull);
     }
+    updateSmoothIRAverage(fir);
+    updateSmoothFULLAverage(ffull);
+
+    fir = getSmoothIRAverage();
+    ffull = getSmoothFULLAverage();
+
+    ir = fir;
+    full = ffull;
+
+    fvis = (ffull > fir) ? (ffull - fir) : 1; // Ensure vis is non-negative
+    vis = fvis;
+
+
 
     if (fabs(fvis - lastVis) < 10.0) // No significant change
     {
@@ -589,22 +585,27 @@ void SQM_TSL2591::takeReading(void)
     continue; // Retry reading with new settings
   }
 
-
-
-  lux = calculateLux(full, ir);
+  lux = calculateLux(ffull, fir);
 
   lux *= TSL2591_LUX_DF;
 
+  updateSmoothAverage(lux);
+  float smoothLux = getSmoothAverage();
+  if (verbose)
+  {
+    Serial.print("Smoothed lux: ");
+    Serial.println(smoothLux);
+  }
 
-  if (lux < (float)0.0000188F)
+  if (smoothLux < (float)0.00000188F)
   {
     // sqm = 25.08355939
-    lux = (float)0.0000188F;
+    smoothLux = (float)0.0000188F;
   }
-  //mpsas = log10(lux / 108000) / (float)-0.45; // calculate SQM
-  mpsas = log10(lux / 108400) / (float)-0.4; // calculate SQM
-  //sqm = -2.5 * log10(lux) + 21.58;
-  sqm=0;
+  // mpsas = log10(lux / 108000) / (float)-0.45; // calculate SQM
+  mpsas = log10(smoothLux / 108400) / (float)-0.4; // calculate SQM
+  // sqm = -2.5 * log10(lux) + 21.58;
+  sqm = 0;
   nelm = (float)7.93 - 5.0 * log10((pow(10, (4.316 - (mpsas / 5.0))) + (float)1.0));
 }
 
@@ -684,7 +685,7 @@ void SQM_TSL2591::write8(uint8_t reg, uint8_t value)
   Wire.endTransmission();
 }
 
-float SQM_TSL2591::calculateLux(uint16_t ch0, uint16_t ch1) /*wbp*/
+float SQM_TSL2591::calculateLux(float ch0, float ch1) /*wbp*/
 {
   float atime, again; /*wbp*/
   float cpl, lux1, lux2, lux;
@@ -747,13 +748,12 @@ float SQM_TSL2591::calculateLux(uint16_t ch0, uint16_t ch1) /*wbp*/
     break;
   }
 
-
   cpl = (atime * again) / 408.0F;
-  //lux = (((float)ch0 - (float)ch1)) * (1.0F - ((float)ch1 / (float)ch0)) / cpl;
+  // lux = (((float)ch0 - (float)ch1)) * (1.0F - ((float)ch1 / (float)ch0)) / cpl;
 
-  lux1 = ( (float)ch0 - (TSL2591_LUX_COEFB * (float)ch1) ) / cpl;
-  lux2 = ( ( TSL2591_LUX_COEFC * (float)ch0 ) - ( TSL2591_LUX_COEFD * (float)ch1 ) ) / cpl;
-  
+  lux1 = ((float)ch0 - (TSL2591_LUX_COEFB * (float)ch1)) / cpl;
+  lux2 = ((TSL2591_LUX_COEFC * (float)ch0) - (TSL2591_LUX_COEFD * (float)ch1)) / cpl;
+
   // The highest value is the approximate lux equivalent
   lux = lux1 > lux2 ? lux1 : lux2;
 
@@ -814,4 +814,82 @@ void SQM_TSL2591::getSensor(sensor_t *sensor)
   sensor->max_value = 88000.0;
   sensor->min_value = 0.001;
   sensor->resolution = 0.001;
+}
+
+float SQM_TSL2591::getSmoothAverage()
+{
+  return smoothAverage;
+}
+
+void SQM_TSL2591::updateSmoothAverage(float newLux)
+{
+
+  // Subtract the oldest reading from the total
+  smoothTotal -= smoothReadings[smoothIndex];
+
+  // Add the new reading to the array and total
+  smoothReadings[smoothIndex] = newLux;
+  smoothTotal += smoothReadings[smoothIndex];
+
+  // Move to the next index in the array
+  smoothIndex++;
+  if (smoothIndex >= smoothnumReadings)
+  {
+    smoothIndex = 0; // Wrap around to the beginning
+  }
+
+  // Calculate the smoothed average
+  smoothAverage = smoothTotal / smoothnumReadings;
+}
+
+float SQM_TSL2591::getSmoothIRAverage()
+{
+  return smoothIRAverage;
+}
+
+void SQM_TSL2591::updateSmoothIRAverage(float newLux)
+{
+
+  // Subtract the oldest reading from the total
+  smoothIRTotal -= smoothIRReadings[smoothIRIndex];
+
+  // Add the new reading to the array and total
+  smoothIRReadings[smoothIRIndex] = newLux;
+  smoothIRTotal += smoothIRReadings[smoothIRIndex];
+
+  // Move to the next index in the array
+  smoothIRIndex++;
+  if (smoothIRIndex >= smoothnumReadings)
+  {
+    smoothIRIndex = 0; // Wrap around to the beginning
+  }
+
+  // Calculate the smoothed average
+  smoothIRAverage = smoothIRTotal / smoothnumReadings;
+}
+
+float SQM_TSL2591::getSmoothFULLAverage()
+{
+  return smoothFULLAverage;
+}
+
+void SQM_TSL2591::updateSmoothFULLAverage(float newLux)
+{
+
+  // Subtract the oldest reading from the total
+  smoothFULLTotal -= smoothFULLReadings[smoothFULLIndex];
+
+  // Add the new reading to the array and total
+  smoothFULLReadings[smoothFULLIndex] = newLux;
+  smoothFULLTotal += smoothFULLReadings[smoothFULLIndex];
+
+  // Move to the next index in the array
+  smoothFULLIndex++;
+  if (smoothFULLIndex >= smoothnumReadings)
+  {
+    smoothFULLIndex = 0; // Wrap around to the beginning
+  }
+
+  // Calculate the smoothed average
+  smoothFULLAverage = smoothFULLTotal / smoothnumReadings;
 }

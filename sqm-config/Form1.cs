@@ -191,8 +191,8 @@ namespace sqm_config
                 double vis = double.Parse(GetSplitValue(response, "vis"), CultureInfo.InvariantCulture);
                 lblVIS.Text = vis.ToString("0");
 
-                double dmpsas = double.Parse(GetSplitValue(response, "dmpsas"), CultureInfo.InvariantCulture);
-                lblDMPSAS.Text = dmpsas.ToString("0.000");
+                //double dmpsas = double.Parse(GetSplitValue(response, "dmpsas"), CultureInfo.InvariantCulture);
+                //lblDMPSAS.Text = dmpsas.ToString("0.000");
 
                 double integration = double.Parse(GetSplitValue(response, "integration"), CultureInfo.InvariantCulture);
                 lblExp.Text = integration.ToString("0") + " ms";

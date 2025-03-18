@@ -61,7 +61,10 @@
 
 #include "SQM_TSL2591.h"
 
-#define MAX_ITERATIONS 32 // Define the maximum number of iterations
+#define MAX_ITERATIONS 6 // Define the maximum number of iterations
+#define TSL2591_CMD 0xA0
+#define TSL2591_STATUS_REGISTER 0x13
+#define TSL2591_STATUS_AVALID 0x01
 
 SQM_TSL2591::SQM_TSL2591(int32_t sensorID)
 {
@@ -195,6 +198,17 @@ void SQM_TSL2591::setDF(float df)
   TSL2591_LUX_DF = df;
 }
 
+
+void SQM_TSL2591::setSQMoffset(float of)
+{
+  TSL2591_SQM_OFFSET = of;
+}
+
+float SQM_TSL2591::getSQMoffset()
+{
+  return TSL2591_SQM_OFFSET;
+}
+
 float SQM_TSL2591::getDF()
 {
   return TSL2591_LUX_DF;
@@ -280,29 +294,19 @@ uint32_t SQM_TSL2591::getFullLuminosity(void)
   // Enable the device
   enable();
 
-  // Wait x ms for ADC to complete
-  /*
-  for (uint8_t d = 0; d <= _integration; d++)
+  // Non-blocking delay for ADC to complete
+  while (!isMeasurementReady())
   {
-    delay(120);
+    // Yield control to other tasks
+    yield();
   }
-*/
-  
-    // Non-blocking delay for ADC to complete
-    uint32_t startTime = millis();
-    while (millis() - startTime < (120 * (_integration + 1)))
-    {
-      // Yield control to other tasks
-      yield();
-    }
 
+  disable();
 
   uint32_t x;
   x = read16(TSL2591_COMMAND_BIT | TSL2591_REGISTER_CHAN1_LOW);
   x <<= 16;
   x |= read16(TSL2591_COMMAND_BIT | TSL2591_REGISTER_CHAN0_LOW);
-
-  disable();
 
   return x;
 }
@@ -397,7 +401,7 @@ void SQM_TSL2591::bumpTime(int bumpDirection)
   setTiming(config.time);
 }
 
-void SQM_TSL2591::calibrateReadingsForTemperature(uint16_t &ir, uint16_t &full)
+void SQM_TSL2591::calibrateReadingsForTemperature(float &ir, float &full)
 {
   if (_hasTemperature)
   {
@@ -410,8 +414,8 @@ void SQM_TSL2591::calibrateReadingsForTemperature(uint16_t &ir, uint16_t &full)
     }
     float irCalibrationFactor = _temperature * _temperatureCalibration.irSlope + _temperatureCalibration.irIntercept;
     float fullCalibrationFactor = _temperature * _temperatureCalibration.fullLuminositySlope + _temperatureCalibration.fullLuminosityIntercept;
-    ir = static_cast<uint16_t>(static_cast<float>(ir) * irCalibrationFactor);
-    full = static_cast<uint16_t>(static_cast<float>(full) * fullCalibrationFactor);
+    ir = ir * irCalibrationFactor;
+    full = full * fullCalibrationFactor;
     if (verbose)
     {
       Serial.print("Values after temperature calibration: ir=");
@@ -433,8 +437,7 @@ void SQM_TSL2591::takeReading(void)
 
   const int numReadings = 2;
   uint32_t totalVis = 0, totalIr = 0, totalFull = 0;
-  
-  
+
   while (niter < MAX_ITERATIONS)
   {
 
@@ -447,7 +450,8 @@ void SQM_TSL2591::takeReading(void)
       totalIr += lum >> 16;
       totalFull += lum & 0xFFFF;
 
-      if (verbose) {
+      if (verbose)
+      {
         Serial.print("Raw IR: ");
         Serial.print(lum >> 16);
         Serial.print(" Raw Full: ");
@@ -459,23 +463,21 @@ void SQM_TSL2591::takeReading(void)
       {
         // Yield control to other tasks
         yield();
-      } 
-      //delay(50); // Allow time between readings
+      }
+      // delay(50); // Allow time between readings
     }
     fir = (float)totalIr / numReadings;
     ffull = (float)totalFull / numReadings;
 
+
+    calibrateReadingsForTemperature(fir, ffull); 
+
     ir = fir;
     full = ffull;
 
-    // ir = lum >> 16;
-    // full = lum & 0xFFFF;
-    calibrateReadingsForTemperature(ir, full);
-
     fvis = (ffull > fir) ? (ffull - fir) : 1; // Ensure vis is non-negative
     vis = fvis;
-    // if (ir > vis)
-    //   vis = 1.0;  //why?
+
 
     if (verbose)
     {
@@ -495,7 +497,7 @@ void SQM_TSL2591::takeReading(void)
     }
     lastVis = fvis;
     // Check for saturation or faint light and adjust settings accordingly
-    if (ffull >= 65000 || fir >= 65000)
+    if (ffull >= 50000 || fir >= 50000)
     {
       // Sensor is saturated
       if (verbose)
@@ -534,7 +536,7 @@ void SQM_TSL2591::takeReading(void)
     }
     else if ((float)fvis < 128.0)
     {
-     
+
       if (!gainAdjusted)
       { // Only adjust if gain wasn't just decreased
         if (_gain != TSL2591_GAIN_MAX)
@@ -583,34 +585,56 @@ void SQM_TSL2591::takeReading(void)
       // Yield control to other tasks
       yield();
     }
-  //  delay(50); // Allow sensor to stabilize
-    continue;  // Retry reading with new settings
+    //  delay(50); // Allow sensor to stabilize
+    continue; // Retry reading with new settings
   }
 
-  float IR = (float)fir / (gainValue * integrationValue / 200.F * (float)niter);
-  float VIS = (float)fvis / (gainValue * integrationValue / 200.F * (float)niter);
 
-  // Calculate mpsas (magnitude per square arcsecond)
-  if (VIS > 0)
-  {
-    mpsas = 12.6F - 1.086F * log(VIS) + _calibrationOffset;
-  }
-  else
-  {
-    mpsas = 25.0; // Default value for extremely low light
-  }
-
-  // Calculate dmpsas (uncertainty in mpsas)
-  if (fvis > 0)
-  {
-    dmpsas = 1.086F / sqrt((float)fvis);
-  }
-  else
-  {
-    dmpsas = 0.0; // Handle division by zero
-  }
 
   lux = calculateLux(full, ir);
+
+  lux *= TSL2591_LUX_DF;
+
+  if (lux == (float).0F)
+  {
+    // sqm = 20.08355939
+    lux = (float)0.0001F;
+  }
+  if (lux < (float)0.00001F)
+  {
+    // sqm = 25.08355939
+    lux = (float)0.00001F;
+  }
+  //mpsas = log10(lux / 108000) / (float)-0.45; // calculate SQM
+  mpsas = log10(lux / 108400) / (float)-0.4; // calculate SQM
+  //sqm = -2.5 * log10(lux) + 21.58;
+  sqm=0;
+  nelm = (float)7.93 - 5.0 * log10((pow(10, (4.316 - (mpsas / 5.0))) + (float)1.0));
+}
+
+bool SQM_TSL2591::isMeasurementReady()
+{
+  int reg = _readRegister(TSL2591_CMD | TSL2591_STATUS_REGISTER);
+  return reg & TSL2591_STATUS_AVALID;
+}
+
+uint8_t SQM_TSL2591::_readRegister(uint8_t reg)
+{
+  _write(reg);
+  return _read();
+}
+
+uint8_t SQM_TSL2591::_read()
+{
+  Wire.requestFrom(TSL2591_ADDR, 1);
+  return Wire.read();
+}
+
+void SQM_TSL2591::_write(uint8_t reg)
+{
+  Wire.beginTransmission(TSL2591_ADDR);
+  Wire.write(reg);
+  Wire.endTransmission(true);
 }
 
 uint8_t SQM_TSL2591::read8(uint8_t reg)
@@ -727,20 +751,19 @@ float SQM_TSL2591::calculateLux(uint16_t ch0, uint16_t ch1) /*wbp*/
     break;
   }
 
-  // Calculate counts per lux (cpl)
-  cpl = (atime * again) / (float)TSL2591_LUX_DF;
 
-  // Calculate lux1 and lux2
-  lux1 = ((float)ch0 - (TSL2591_LUX_COEFB * (float)ch1)) / cpl;
-  lux2 = ((TSL2591_LUX_COEFC * (float)ch0) - (TSL2591_LUX_COEFD * (float)ch1)) / cpl;
+  cpl = (atime * again) / 408.0F;
+  //lux = (((float)ch0 - (float)ch1)) * (1.0F - ((float)ch1 / (float)ch0)) / cpl;
 
+  lux1 = ( (float)ch0 - (TSL2591_LUX_COEFB * (float)ch1) ) / cpl;
+  lux2 = ( ( TSL2591_LUX_COEFC * (float)ch0 ) - ( TSL2591_LUX_COEFD * (float)ch1 ) ) / cpl;
+  
   // The highest value is the approximate lux equivalent
   lux = lux1 > lux2 ? lux1 : lux2;
 
-  // Ensure lux is non-negative
-  if (lux < 0)
+  if (isinff(lux) || isnanf(lux))
   {
-    lux = 0;
+    lux = 0.0000188F;
   }
 
   return lux;

@@ -29,8 +29,8 @@
 ttps://easyeda.com/hujer.roman/sqm-hr
 
 */
-#define Version "1.0.9"
-#define SERIAL_NUMBER "00000001"
+#define Version "1.0.0"
+#define SERIAL_NUMBER "00000002"
 #include "Config.h"
 #include "Setup.h"
 #include "Validate.h"
@@ -209,11 +209,14 @@ void processCommand(const char *command)
     Serial.print(",vis:");
     Serial.print(sqm.fvis);
 
-    Serial.print(",mag:");
-    float mag = sqm.mpsas + ReadEESqmCalOffset();
+    Serial.print(",mag:");    
+    mag = sqm.mpsas + SqmCalOffset;
     Serial.print(mag, 3);
-    Serial.print(",dmpsas:");
-    Serial.print(sqm.dmpsas);
+    Serial.print(",sqm:");   
+    mag = sqm.sqm + SqmCalOffset; 
+    Serial.print(mag, 3);
+    Serial.print(",nelm:");
+    Serial.print(sqm.nelm);
     Serial.print(",integration:");
     Serial.print(sqm.integrationValue);
     Serial.print(",gain:");

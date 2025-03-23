@@ -294,6 +294,7 @@ uint32_t SQM_TSL2591::getFullLuminosity(void)
   // Enable the device
   enable();
 
+
   // Non-blocking delay for ADC to complete
   while (!isMeasurementReady())
   {

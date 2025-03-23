@@ -796,16 +796,7 @@ namespace sqm_config
             chkConnectStartup.Text = "Connect on startup";
             chkConnectStartup.UseVisualStyleBackColor = true;
             chkConnectStartup.CheckedChanged += chkConnectStartup_CheckedChanged;
-            // 
-            // btnFirmware
-            // 
-            btnFirmware.Location = new Point(41, 192);
-            btnFirmware.Name = "btnFirmware";
-            btnFirmware.Size = new Size(92, 23);
-            btnFirmware.TabIndex = 20;
-            btnFirmware.Text = "New Firmware";
-            btnFirmware.UseVisualStyleBackColor = true;
-            btnFirmware.Click += btnFirmware_Click;
+
             // 
             // Form1
             // 

@@ -173,7 +173,7 @@ namespace ASCOM.SQMeter.ObservingConditions
                 SharedResources.SharedSerial.Speed = SerialSpeed.ps9600;
                 if (pollingInterval < 2000) pollingInterval = 2000;
 
-                SharedResources.SharedSerial.ReceiveTimeout = pollingInterval;
+                SharedResources.SharedSerial.ReceiveTimeout = pollingInterval / 1000;
                 SharedResources.SharedSerial.Connected = true;
 
                 connectedState = initSQM();

@@ -25,9 +25,7 @@ internal class SQMSerial
         catch
         {
             MessageBox.Show("Cannot open port!");
-                
-                
-                }
+        }
     }
 
     // Asynchronous Send Command
@@ -35,19 +33,20 @@ internal class SQMSerial
     {
         _responseBuffer.Clear();
         _cts = new CancellationTokenSource(timeout);
-        if (!_serialPort.IsOpen)
-            throw new InvalidOperationException("Serial port is not open.");
-
-        _serialPort.Write(command); // Send Command
-
-        try
+        if (_serialPort.IsOpen)
         {
-            return await ReadResponseAsync(_cts.Token);
+            _serialPort.Write(command); // Send Command
+
+            try
+            {
+                return await ReadResponseAsync(_cts.Token);
+            }
+            catch (OperationCanceledException)
+            {
+                return "Timeout";
+            }
         }
-        catch (OperationCanceledException)
-        {
-            return "Timeout";
-        }
+        return _responseBuffer.ToString();
     }
 
     // Asynchronous Read Response

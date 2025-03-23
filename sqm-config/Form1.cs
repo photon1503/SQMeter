@@ -8,8 +8,8 @@ using ScottPlot.Plottables;
 using ScottPlot.Colormaps;
 using ScottPlot;
 using static ScottPlot.Generate;
-using ArduinoUploader;
-using ArduinoUploader.Hardware;
+
+using System.Windows.Forms.Design;
 
 namespace sqm_config
 {
@@ -484,21 +484,6 @@ namespace sqm_config
             }
 
             connect();
-        }
-
-        private void btnFirmware_Click(object sender, EventArgs e)
-        {
-            _sqmSerial.Close();
-            isConnected = false;
-
-            var uploader = new ArduinoSketchUploader(
-            new ArduinoSketchUploaderOptions
-            {
-                FileName = @"C:\git\SQMeter\Firmware\.pio\build\nanoatmega328new\firmware.hex",
-                PortName = "COM7",
-                ArduinoModel = ArduinoModel.NanoR3,
-            });
-            uploader.UploadSketch();
         }
     }
 }

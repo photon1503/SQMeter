@@ -15,8 +15,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="ArduinoUploader" Version="3.2.0" />
-    <PackageReference Include="IntelHexFormatReader" Version="2.2.3" />
     <PackageReference Include="ScottPlot.WinForms" Version="5.0.54" />
     <PackageReference Include="System.IO.Ports" Version="10.0.0-preview.1.25080.5" />
   </ItemGroup>

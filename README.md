@@ -50,7 +50,7 @@ An **Arduino-compatible Sky Quality Meter** leveraging the **TSL2591** and **BME
 - **Arduino Nano**
 - **TSL2591 Light Sensor**
 - **BME280 Temperature Sensor**
-- **3.5mm M12 Lens**
+- **clear plastic window**
 - **M12 Lens Holder**
 - **3D Printed Case**
 

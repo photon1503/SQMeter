@@ -85,7 +85,7 @@ unsigned long previousReadingMillis = 0;
 
 const long weatherInterval = 5000; // Read weather every 5 seconds
 const long tempCalInterval = 10000; // Check temperature calibration every 10 seconds
-const long readingInterval = 2000; // Take SQM reading every 2 seconds
+const long readingInterval = 2500; // Take SQM reading every 2 seconds
 
 
 

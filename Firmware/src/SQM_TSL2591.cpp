@@ -410,7 +410,7 @@ void SQM_TSL2591::bumpTime(int bumpDirection)
   setTiming(config.time);
 }
 
-void SQM_TSL2591::calibrateReadingsForTemperature(float &ir, float &full)
+void SQM_TSL2591::calibrateReadingsForTemperature(uint16_t &ir, uint16_t &full)
 {
   if (_hasTemperature)
   {
@@ -451,8 +451,8 @@ void SQM_TSL2591::takeReading(void)
     configSensor();
 
     lum = getFullLuminosity();
-    fir = lum >> 16;
-    ffull = lum & 0xFFFF;
+    ir = lum >> 16;
+    full = lum & 0xFFFF;
 
     if (verbose)
     {
@@ -462,39 +462,20 @@ void SQM_TSL2591::takeReading(void)
       Serial.println(lum & 0xFFFF);
     }
 
-    calibrateReadingsForTemperature(fir, ffull);
-    if (verbose)
-    {
-      Serial.print("vis: ");
-      Serial.print(fvis);
-      Serial.print(" ir: ");
-      Serial.print(fir);
-      Serial.print(" full: ");
-      Serial.println(ffull);
-    }
-    updateSmoothIRAverage(fir);
-    updateSmoothFULLAverage(ffull);
-
-    fir = getSmoothIRAverage();
-    ffull = getSmoothFULLAverage();
-
-    ir = fir;
-    full = ffull;
-
-    fvis = (ffull > fir) ? (ffull - fir) : 1; // Ensure vis is non-negative
-    vis = fvis;
+    calibrateReadingsForTemperature(ir, full);
 
 
+    vis = (full > ir) ? (full - ir) : 1;;
 
-    if (fabs(fvis - lastVis) < 10.0) // No significant change
+    if (fabs(vis - lastVis) < 10.0) // No significant change
     {
       if (verbose)
         Serial.println("Light readings not improving. Exiting.");
       break;
     }
-    lastVis = fvis;
+    lastVis = vis;
     // Check for saturation or faint light and adjust settings accordingly
-    if (ffull >= 50000 || fir >= 50000)
+    if (full >= 50000 || ir >= 50000)
     {
       // Sensor is saturated
       if (verbose)
@@ -531,7 +512,7 @@ void SQM_TSL2591::takeReading(void)
         break;
       }
     }
-    else if ((float)fvis < 128.0)
+    else if ((float)vis < 128.0)
     {
 
       if (!gainAdjusted)
@@ -585,6 +566,14 @@ void SQM_TSL2591::takeReading(void)
     //  delay(50); // Allow sensor to stabilize
     continue; // Retry reading with new settings
   }
+
+  updateSmoothIRAverage(ir);
+  updateSmoothFULLAverage(full);
+
+  fir = getSmoothIRAverage();
+  ffull = getSmoothFULLAverage();
+
+  fvis = (ffull > fir) ? (ffull - fir) : 1; // Ensure vis is non-negative
 
   lux = calculateLux(ffull, fir);
 

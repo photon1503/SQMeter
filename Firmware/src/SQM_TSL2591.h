@@ -203,7 +203,7 @@ private:
   float TSL2591_SQM_OFFSET;
   float _temperature;
   bool _hasTemperature = false;
-  void calibrateReadingsForTemperature(float &ir, float &full);
+  void calibrateReadingsForTemperature(uint16_t &ir, uint16_t &full);
   void _write(uint8_t reg);
   uint8_t _read(void);
   uint8_t _readRegister(uint8_t reg);

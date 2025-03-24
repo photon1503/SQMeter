@@ -755,9 +755,10 @@ float SQM_TSL2591::calculateLux(float ch0, float ch1) /*wbp*/
   // The highest value is the approximate lux equivalent
   lux = lux1 > lux2 ? lux1 : lux2;
 
-  if (isinff(lux) || isnanf(lux))
+  if (isinff(lux) || isnanf(lux) || lux < 0)
+
   {
-    lux = 0.0000188F;
+    lux = 0.0000188F / TSL2591_LUX_DF;
   }
 
   return lux;
